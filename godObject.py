@@ -12,7 +12,7 @@ class location:
 
 class GodObject:
     
-    def __init__(self,obj_location,identifier):
+    def __init__(self,identifier, obj_location=None):
         self.obj_location = obj_location
         self.__identifier = identifier
 
