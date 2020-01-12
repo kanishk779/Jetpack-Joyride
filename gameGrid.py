@@ -83,13 +83,21 @@ class LargeGrid:
 
             currentStartCol += obstacleInterval
 
-    
+'''
+This will be the class which will interface with the rest of the game.
+It will also manage the large Grid.
+'''
 class SmallGrid:
     
     def __init__(self):
          self.largeGrid = LargeGrid()
          self.grid = []
          self.numericGrid = []
+    
+    # creates the large grid. This needs to be called only once.
+    def initialiseLargeGrid(self,N):
+        self.largeGrid.createGrid(N)
+    
 
     def loadSmallGrid(self):
         
