@@ -19,8 +19,7 @@ class Game:
             print("Sorry, you were not able to complete the game")
             print("GAME OVER")
             quit()
-
-        else
+        else:
             self.timeRemaining -= 1
         
 

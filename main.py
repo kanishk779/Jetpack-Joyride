@@ -1,8 +1,23 @@
 from colorama import Fore, Back, Style
 from screen import Screen
+from game import *
+from gameGrid import *
+from creature import *
+import time
 
-print(Style.RESET_ALL)
 if __name__ == "__main__":
-    my_screen = Screen(10,10,2)
-    my_screen.generate()
+    manda = Mandalorian()
+    myGame = Game(manda)
+    myGameGrid = SmallGrid()
+    my_screen = Screen(myGame)
+    myGameGrid.initialiseLargeGrid(4)
+    myGameGrid.loadSmallGrid()
+    i = 100
+    step = 1
+    while i>0:
+        i=i-1
+        myGameGrid.progressGame(step)
+        print(myGameGrid.largeGrid.currentLeftColumn)
+        my_screen.generateScreen(myGameGrid)
+        time.sleep(.01)
 

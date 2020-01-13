@@ -1,7 +1,7 @@
 import numpy as np
 from colorama import Fore, Back, Style
-import game
-import gameGrid
+from game import *
+from gameGrid import *
 '''
 Provides the functionality of the game screen
 '''
@@ -9,7 +9,7 @@ class Screen:
 
     # Obtains the game object
     def __init__(self, game):
-        self.game = game
+        self.__game = game
     
     
 
@@ -17,7 +17,10 @@ class Screen:
     def generateScreen(self, gameGrid):
 
         # first print the header
-        self.game.printHeader()
+        self.__game.printHeader()
+        
+        # load the grid
+        gameGrid.loadSmallGrid()
 
         # than print the grid
         gameGrid.printSmallGrid()

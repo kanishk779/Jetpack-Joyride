@@ -15,6 +15,7 @@ class LargeGrid:
     create the grid randomly
     '''
     def createGrid(self,N):
+
         # Make the basic objects of the game
         coins = "$$ $$ $$ $$$$ $$ $$ $$$$ $$ $$ $$"
         horizontalBeam = "           zzzzzzzzzzz           "
@@ -55,31 +56,33 @@ class LargeGrid:
 
         # create the ground
         for i in range(W*N):
-            grid[H-1][i] = 'X'
-            grid[H-2][i] = 'X'
+            self.grid[H-1][i] = self.grid[H-2][i] = 'X'
+            self.numericGrid[H-1][i] = self.numericGrid[H-2][i] = 6 
 
         # create the sky
         for i in range(W*N):
-            grid[0][i] = 'X'
-            grid[1][i] = 'X'
+            self.grid[0][i] =  self.grid[1][i] = 'X'
+            self.numericGrid[0] = self.numericGrid[1] = 7
         
         obstacleInterval = 20
         
         # After every 20 character a obstacle/coins will appear 
         loops = int((W*N)/obstacleInterval)
-        
+        print("loops " + str(loops))
         # randomly generate the starting location of the obstacle/coins
         currentStartCol = 0
         for loop in range(loops):
-            y_start = random.randrange(8 ,28, 1)
-            x_start = random.randrange(5, 15, 1)
+            x_start = random.randrange(8 ,28, 1)
+            y_start = random.randrange(5, 12, 1)
             obj_type = random.randrange(0,configs.NumberOfObstacles,1)
-
+            
             for i in range(obstaclesSizes[obj_type][0]):
                 for j in range(obstaclesSizes[obj_type][1]):
-                    self.grid[x_start+i][y_start+j] = obstacles[obj_type][i][j]
-                    if obstacles[obj_type][i][j] == 'z':
-                        self.numericGrid[x_start+i][y_start+j] = obj_type
+                    self.grid[x_start+i][currentStartCol+ y_start+j] = obstacles[obj_type][i][j]
+                    char = obstacles[obj_type][i][j] 
+                    if char == 'z' or char == '$':
+                        self.numericGrid[x_start+i][currentStartCol+y_start+j]\
+                         =  obj_type+1
 
             currentStartCol += obstacleInterval
 
@@ -90,24 +93,45 @@ It will also manage the large Grid.
 class SmallGrid:
     
     def __init__(self):
-         self.largeGrid = LargeGrid()
-         self.grid = []
-         self.numericGrid = []
-    
+        self.largeGrid = LargeGrid()
+        self.grid = [[0 for j in range(configs.GridWidth)] for i in\
+            range(configs.GridHeight)]
+        self.numericGrid = [[0 for j in range(configs.GridWidth)] for i in \
+            range(configs.GridHeight)]
+        self.N = 0
+
     # creates the large grid. This needs to be called only once.
     def initialiseLargeGrid(self,N):
         self.largeGrid.createGrid(N)
-    
+        self.N = N
+
+    # moves the grid leftwards
+    def progressGame(self, step):
+        W = configs.GridWidth
+
+        self.largeGrid.currentLeftColumn = \
+            (self.largeGrid.currentLeftColumn+step)%(W*self.N)
+
+        self.largeGrid.currentRightColumn = \
+            (self.largeGrid.currentRightColumn+step)%(W*self.N)
+    # moves the grid rightwards
+    def regressGame(self, step):
+        W = configs.GridWidth
+
+        self.largeGrid.currentLeftColumn = \
+            (self.largeGrid.currentLeftColumn -step + W*self.N)%(W*self.N)
+
+        self.largeGrid.currentRightColumn = \
+            (self.largeGrid.currentRightColumn -step + W*self.N)%(W*self.N)
 
     def loadSmallGrid(self):
         
         for i in range(configs.GridHeight):
-            for j in
-            range(self.largeGrid.currentLeftColumn,self.largeGrid.currentRightColumn+1):
-                self.grid[i][j-self.largeGrid.CurrentLeftColumn] =
+            for j in range(self.largeGrid.currentLeftColumn,self.largeGrid.currentRightColumn):
+                self.grid[i][j-self.largeGrid.currentLeftColumn] = \
                 self.largeGrid.grid[i][j]
 
-                self.numericGrid[i][j - self.largeGrid.CurrentLeftColumn] = 
+                self.numericGrid[i][j - self.largeGrid.currentLeftColumn] = \
                 self.largeGrid.numericGrid[i][j]
 
     # Renders the small screen using colors(colorama)
@@ -132,8 +156,10 @@ class SmallGrid:
                     char = beamColor2 + Fore.YELLOW + 'z'
                 elif self.numericGrid[i][j] == 6:
                     char = groundColor + Fore.RED + 'X'
-                elif self.numericGrid[i][j] == 0:
-                    char = skyColor
+                elif self.numericGrid[i][j] == 7:
+                    char = skyColor + Fore.RED + 'X'
+                else:
+                    char = skyColor + ' '
                 
                 print(char,end='')
 

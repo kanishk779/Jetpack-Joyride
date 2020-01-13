@@ -3,12 +3,17 @@
 
 MandaInitialLives = 3
 ViserionInialStrength = 20
-GridWidth = 180
-GridHeight = 40
+GridWidth = 120
+GridHeight = 36
+gameDuration = 100
 coinId = 1
 horizontalBeamId = 2
 verticalBeamId = 3
 mainAngledBeamId = 4
-numberOfObstacles = 5
+NumberOfObstacles = 5
 offAngledBeamId = 5
 groundId = 6
+skyId = 7
+MandaId = 8
+MagnetId = 9
+ViserionId = 10

@@ -1,4 +1,5 @@
 import numpy as np
+import configs
 from godObject import *
 '''
 Class which describes all the persons in the game.
@@ -24,10 +25,16 @@ class Mandalorian(Person):
         super().__init__(configs.MandaInitialLives, configs.MandaId)
         self.shield_present = shield_present
         self.shield_active = shield_active
-
+        #TODO make the image of hero
+        self.arr = "  o   >-|-<  /\\"
+    
+    # fire the bullet in the forward direction
     def fireBullet(self):
         pass
-
+    
+    '''
+    just move forward by increasing the value of current right column
+    '''
     def moveForward(self):
         pass
 
