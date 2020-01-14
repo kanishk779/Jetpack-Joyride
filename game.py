@@ -3,6 +3,14 @@ from creature import *
 
 '''
 Provides various functionality of the game
+1. Render the screen every time and update various things
+2. Print Manda by updating his velocity and adding the velocity to the location
+   to get new location.
+3. Iterate through the list of the Bullets and update their status and than
+   print the bullets
+4. Iterate through the list of the Fire Balls emitted by the Boss Enemy update
+   their location and also print them
+5. Print Viserion
 '''
 class Game:
 

@@ -1,14 +1,9 @@
 import collections
 import numpy as np
+yes = True
+def fun():
+    if yes:
+        return
 
-de = collections.deque()
-de.append(4)
-
-print(de)
-
-de.appendleft(7)
-de.append(6)
-
-print(de)
-de.popleft()
-print(de)
+r1 = fun()
+print(r1)

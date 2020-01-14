@@ -39,6 +39,10 @@ class Mandalorian(Person):
         # keep the list of the locations bullets fired by Manda 
         self.bulletList = []
 
+        # vertical acceleration and speed 
+        self.acceleration = 0
+        self.velocity = 0
+
     
     '''
     fire the bullet in the forward direction, And also keep track of it if
@@ -46,14 +50,27 @@ class Mandalorian(Person):
     to the list.
     '''
     def fireBullet(self):
-        pass
-    
+        # get the position of Manda, that will be position of bullet
+        x,y = self.getLocation()
+        x += 1
+        y += 5
+        # don't fire bullets if they are outside the screen
+        if y>= configs.GridWidth:
+            return
+        loc = Location(1,1)
+        loc.setLocation(x,y)
+        bulletList.append(loc)
+
+        # TODO print the bullet on the screen
+
+        
+
     def hittingViser(self,loc):
         return if loc.y_loc >= configs.GridWidth - configs.ViserionYLen and \
                         loc.x_loc >= configs.GridHeight - configs.ViserionXLen:
 
-    # shift forward each of the bullet this function will be called from the
-    # game.py or the main.py
+    # shift forward each of the bullet, this function will be called from the
+    # game.py or the main.py It returns the points scored by hitting viserion
     def updateBulletStatus(self,ViserionPresent):
         bulletsToBeDeleted = []
         index = 0
@@ -63,20 +80,23 @@ class Mandalorian(Person):
             if loc.y_loc >= configs.GridWidth:
                 bulletsToBeDeleted.append(index)
             index += 1
-        for i in bulletsToBeDeleted:
-            del self.bulletList[i]
 
         '''
         If Viser is present than find out the bullets which are hitting
         him and delete those bullets, also update the game score.
         '''
+        incrementScore = 0
         if ViserionPresent:
             index = 0
             for loc in self.bulletList:
                 if hittingViser(loc):
                     bulletsToBeDeleted.append(index)
-
-
+                    incrementScore += 1
+        
+        for i in bulletsToBeDeleted:
+            del self.bulletList[i]
+ 
+        return incrementScore
 
             
     '''
@@ -86,23 +106,52 @@ class Mandalorian(Person):
     2. We actually change the position of manda on the grid my moving him one 
        column forward.
     '''
-    def moveForward(self):
 
-        # now move manda according to the one of the above mentioned ways
+    # here we need to implement gravity as well
+    # the Impulse will change the velocity in upward and gravity will try to
+    # change the velocity in the downward direction . Also keep if the upper
+    # right corner touches the upper wall of the grid than don't further
+    # increase the velocity , it will imitate the collision with the wall
+    # because the impulse provided by the user up button will counteract the 
+    # collision with the wall.
 
-    def moveBackward(self):
-        pass
-
-    def jump(self):
-        pass
-    
-    # checks if there is any collision and accordingly
+    # checks if there is any collision.
+    # the usual moving speed of the grid will be small so that the frequency of
+    # painting it will also be small.
     def move(self, keyPressed):
          
         # first repaint the grid by bringing the cursor to the starting.
         print('')  # escape sequence to bring the cursor to the starting
 
+        # now paint the grid
+
+        # now place manda on grid after updating the location of manda
+        x,y = self.getLocation()
+        if keyPressed in ['a', 'A']:
+            y -= 1
+        elif keyPressed in ['d', 'D']:
+            y += 1
+        elif keyPressed in ['w', 'W']:
+            self.velocity += configs.Impulse
+        elif keyPressed in ['b', 'B']:
+            fireBullet()
         
+
+        if y>= configs.GridWidth-configs.MandaYLen:
+            y -= 1
+        if y<0 :
+            y += 1
+        if x >= configs.GridHeight - configs.MandaXLen:
+            x -= self.velocity
+        if x<0:
+            x -= self.velocity
+        self.setLocation(x,y)
+
+        # check if there is any collision
+        for i in configs.MandaXLen:
+            for j in configs.MandaYLen:
+
+
 '''
 Boss enemy of the game
 '''
