@@ -22,22 +22,36 @@ class LargeGrid:
         verticalBeam = "zzzzzz"
         mainAngledBeam = "z      z      z      z      z      z"
         offAngledBeam = "     z    z    z    z    z    z     "
+        bonus = "BBBB"
+        shield = "SSSS"
+        dragon = "DDDD"
+        magnet = "MMMM"
 
         coins = np.array(list(coins))
         horizontalBeam = np.array(list(horizontalBeam))
         verticalBeam = np.array(list(verticalBeam))
         mainAngledBeam = np.array(list(mainAngledBeam))
         offAngledBeam = np.array(list(offAngledBeam))
+        bonus = np.array(list(bonus))
+        shield = np.array(list(shield))
+        dragon = np.array(list(dragon))
+        magnet = np.array(list(dragon))
 
         coins = coins.reshape(3,11)
         horizontalBeam = horizontalBeam.reshape(3,11)
         verticalBeam = verticalBeam.reshape(6,1)
         mainAngledBeam = mainAngledBeam.reshape(6,6)
         offAngledBeam = offAngledBeam.reshape(6,6)
-        
-        obstaclesSizes = [[3,11],[3,11],[6,1],[6,6],[6,6]]
+        bonus = bonus.reshape(2,2)
+        shield = shield.reshape(2,2)
+        dragon = dragon.reshape(2,2)
+        magnet = magnet.reshape(2,2)
+
+
+        obstaclesSizes = \
+        [[3,11],[3,11],[6,1],[6,6],[6,6],[2,2],[2,2],[2,2],[2,2]]
         obstacles = [coins, horizontalBeam, verticalBeam, mainAngledBeam,
-                offAngledBeam]
+                offAngledBeam, bonus, shield,dragon,magnet]
         
         '''
         we need to make a H*W*N grid which means N repetition of H*W grid
@@ -57,30 +71,45 @@ class LargeGrid:
         # create the ground
         for i in range(W*N):
             self.grid[H-1][i] = self.grid[H-2][i] = 'X'
-            self.numericGrid[H-1][i] = self.numericGrid[H-2][i] = 6 
+            self.numericGrid[H-1][i] = self.numericGrid[H-2][i] =\
+            configs.groundId 
 
         # create the sky
         for i in range(W*N):
             self.grid[0][i] =  self.grid[1][i] = 'X'
-            self.numericGrid[0] = self.numericGrid[1] = 7
+            self.numericGrid[0] = self.numericGrid[1] = \
+            configs.skyId
         
-        obstacleInterval = 20
+        obstacleInterval = 30
         
-        # After every 20 character a obstacle/coins will appear 
+        # After every 30 character a obstacle/coins will appear 
         loops = int((W*N)/obstacleInterval)
         print("loops " + str(loops))
         # randomly generate the starting location of the obstacle/coins
         currentStartCol = 0
+        dragonFound = False
+        magnetFound = False
+
         for loop in range(loops):
             x_start = random.randrange(8 ,28, 1)
             y_start = random.randrange(5, 12, 1)
             obj_type = random.randrange(0,configs.NumberOfObstacles,1)
-            
+            if obj_type+1 == configs.dragonId:
+                if dragonFound:
+                    obj_type = configs.coinId
+                else:
+                    dragonFound = True
+            if obj_type+1 == configs.magnetId:
+                if magnetFound:
+                    obj_type = configs.coinId
+                else:
+                    magnetFound = True
+
             for i in range(obstaclesSizes[obj_type][0]):
                 for j in range(obstaclesSizes[obj_type][1]):
                     self.grid[x_start+i][currentStartCol+ y_start+j] = obstacles[obj_type][i][j]
                     char = obstacles[obj_type][i][j] 
-                    if char == 'z' or char == '$':
+                    if char in ['z','$','M','D','S','B']
                         self.numericGrid[x_start+i][currentStartCol+y_start+j]\
                          =  obj_type+1
 
@@ -142,22 +171,36 @@ class SmallGrid:
         groundColor = Back.GREEN
         beamColor1 = Back.YELLOW
         beamColor2 = Back.RED
-        
+        bonusColor = Back.MAGENTA
+        shieldColor = Back.YELLOW
+        dragonColor = Back.Green
+        magnetColor = Back.YELLOW
+
         for i in range(configs.GridHeight):
             for j in range(configs.GridWidth):
                 
                 char = ''
 
-                if self.numericGrid[i][j] == 1:
+                if self.numericGrid[i][j] == configs.coinId:
                     char = coinsColor + Fore.BLACK + '$'                
-                elif self.numericGrid[i][j] in [2,3]:
+                elif self.numericGrid[i][j] in [configs.horizontalBeamId,
+                        configs.verticalBeamId]:
                     char =  beamColor1 + Fore.RED + 'z'
-                elif self.numericGrid[i][j] in [4,5]:
+                elif self.numericGrid[i][j] in\
+                [configs.mainAngledBeamId, configs.offAngledBeamId]:
                     char = beamColor2 + Fore.YELLOW + 'z'
-                elif self.numericGrid[i][j] == 6:
+                elif self.numericGrid[i][j] == configs.groundId:
                     char = groundColor + Fore.RED + 'X'
-                elif self.numericGrid[i][j] == 7:
+                elif self.numericGrid[i][j] == configs.skyId:
                     char = skyColor + Fore.RED + 'X'
+                elif self.numericGrid[i][j] == configs.bonusId:
+                    char = bonusColor + Fore.GREEN + 'B'
+                elif self.numericGrid[i][j] == configs.shieldId:
+                    char = shieldColor + Fore.RED + 'S'
+                elif self.numericGrid[i][j] == configs.magnetId:
+                    char = magnetColor + Fore.BLACK + 'M'
+                elif self.numericGrid[i][j] == configs.dragonId:
+                    char = dragonColor + Fore.MAGENTA + 'D'
                 else:
                     char = skyColor + ' '
                 
