@@ -33,7 +33,10 @@ class LargeGrid:
         mainAngledBeam = np.array(list(mainAngledBeam))
         offAngledBeam = np.array(list(offAngledBeam))
         bonus = np.array(list(bonus))
-        shield = np.array(list(shield))
+        # shield is not going to appear as an obstacle in the game but it will
+        # automatically fill in after every 60 seconds and the manda will be
+        # able to use it once it is available.
+
         dragon = np.array(list(dragon))
         magnet = np.array(list(dragon))
 
@@ -43,15 +46,14 @@ class LargeGrid:
         mainAngledBeam = mainAngledBeam.reshape(6,6)
         offAngledBeam = offAngledBeam.reshape(6,6)
         bonus = bonus.reshape(2,2)
-        shield = shield.reshape(2,2)
         dragon = dragon.reshape(2,2)
         magnet = magnet.reshape(2,2)
 
 
         obstaclesSizes = \
-        [[3,11],[3,11],[6,1],[6,6],[6,6],[2,2],[2,2],[2,2],[2,2]]
+        [[3,11],[3,11],[6,1],[6,6],[6,6],[2,2],[2,2],[2,2]]
         obstacles = [coins, horizontalBeam, verticalBeam, mainAngledBeam,
-                offAngledBeam, bonus, shield,dragon,magnet]
+                offAngledBeam, bonus,dragon,magnet]
         
         '''
         we need to make a H*W*N grid which means N repetition of H*W grid
@@ -109,7 +111,7 @@ class LargeGrid:
                 for j in range(obstaclesSizes[obj_type][1]):
                     self.grid[x_start+i][currentStartCol+ y_start+j] = obstacles[obj_type][i][j]
                     char = obstacles[obj_type][i][j] 
-                    if char in ['z','$','M','D','S','B']
+                    if char in ['z','$','M','D','B']
                         self.numericGrid[x_start+i][currentStartCol+y_start+j]\
                          =  obj_type+1
 
@@ -172,7 +174,6 @@ class SmallGrid:
         beamColor1 = Back.YELLOW
         beamColor2 = Back.RED
         bonusColor = Back.MAGENTA
-        shieldColor = Back.YELLOW
         dragonColor = Back.Green
         magnetColor = Back.YELLOW
 
@@ -195,8 +196,6 @@ class SmallGrid:
                     char = skyColor + Fore.RED + 'X'
                 elif self.numericGrid[i][j] == configs.bonusId:
                     char = bonusColor + Fore.GREEN + 'B'
-                elif self.numericGrid[i][j] == configs.shieldId:
-                    char = shieldColor + Fore.RED + 'S'
                 elif self.numericGrid[i][j] == configs.magnetId:
                     char = magnetColor + Fore.BLACK + 'M'
                 elif self.numericGrid[i][j] == configs.dragonId:

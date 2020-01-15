@@ -118,13 +118,12 @@ class Mandalorian(Person):
     # checks if there is any collision.
     # the usual moving speed of the grid will be small so that the frequency of
     # painting it will also be small.
+    
     def move(self, keyPressed):
          
-        # first repaint the grid by bringing the cursor to the starting.
-        print('')  # escape sequence to bring the cursor to the starting
-
-        # now paint the grid
-
+        # This function only changes the position of Manda. Grid repainting, and
+        # other things will be done in game.py
+        
         # now place manda on grid after updating the location of manda
         x,y = self.getLocation()
         if keyPressed in ['a', 'A']:
@@ -150,10 +149,32 @@ class Mandalorian(Person):
         # check if there is any collision
         for i in configs.MandaXLen:
             for j in configs.MandaYLen:
+                
+                if grid[x+i][y+j] == '$':
+                    # change actual grid and numeric grid and ++ score
 
+                if grid[x+i][y+j] == 'z':
+                    if not beamSeen:
+                        beamseen = True
+                        # decrease live and step ahead of that beam so that in
+                        # next iteration you do not encounter the beam. Move the
+                        # background , do not move Manda
+
+                if grid[x+i][y+j] == 'B':
+                    if not bonusSeen:
+                        bonusSeen = True
+                        # speed up the game for ten seconds keep a check on time
+                        # so that we can stop it after 10 seconds, step ahead of
+                        # bonus.
+                if grid[x+i][y+j] == 'D':
+                    if not dragonSeen:
+                        dragonSeen = True
+                        # remove manda from screen and bring in the dragon to
+                        # the screen. Dragon needs to move in a wriggly manner. 
 
 '''
-Boss enemy of the game
+Boss enemy of the game . Changes position according to position of Mandalorian
+and throws ice balls at him.
 '''
 class Viserion(Person):
 
