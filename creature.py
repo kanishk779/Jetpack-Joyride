@@ -40,10 +40,39 @@ class Mandalorian(Person):
         self.bulletList = []
 
         # vertical acceleration and speed 
-        self.acceleration = 0
+        self.acceleration = configs.gravity
         self.velocity = 0
 
+        # dragon form is on or not. Once it is on we need to cycle 
+        self.dragonMode = False
+        self.dragonIndex = 0
     
+    def createDragon(self):
+        d1 = '_.~"~._.~"~._'
+        d2 = '._.~"~._.~"~.'
+        d3 = '~._.~"~._.~"~'
+        d4 = '"~._.~"~._.~"'
+        d5 = '~"~._.~"~._.~'
+        d6 = '.~"~._.~"~._.'
+        empty = '             '
+        t1 = '  _p_  '
+        t2 = ' /  *\\ '
+        t4 = ' /  .\\ '
+        t3 = '/ /^`-\''
+        dragonFrames = [d1,d2,d3,d4,d5,d6]
+        if self.dragonIndex%2 == 0:
+            dragon =\
+            empty+t1+dragonFrames[self.dragonIndex]+t2+dragonFrames[self.dragonIndex]+t3
+        else:
+            dragon =\
+            empty+t1+dragonFrames[self.dragonIndex]+t4+dragonFrames[self.dragonIndex]+t3
+        
+        dragon = np.array(list(dragon))
+        dragon = dragon.reshape(3,20)
+        self.dragonIndex = (self.dragonIndex+1)%6
+        return dragon
+
+
     '''
     fire the bullet in the forward direction, And also keep track of it if
     the bullet hit the Viserion. Firing a bullet will add location of the bullet
@@ -53,7 +82,10 @@ class Mandalorian(Person):
         # get the position of Manda, that will be position of bullet
         x,y = self.getLocation()
         x += 1
-        y += 5
+        if self.dragonMode:
+            y += 20
+        else:
+            y += 5
         # don't fire bullets if they are outside the screen
         if y>= configs.GridWidth:
             return
@@ -61,17 +93,17 @@ class Mandalorian(Person):
         loc.setLocation(x,y)
         bulletList.append(loc)
 
-        # TODO print the bullet on the screen
+        # TODO print the bullet on the screen this will be done in game.py
 
         
 
-    def hittingViser(self,loc):
+    def hittingViser(self,loc,ViserionXloc):
         return if loc.y_loc >= configs.GridWidth - configs.ViserionYLen and \
-                        loc.x_loc >= configs.GridHeight - configs.ViserionXLen:
+                        loc.x_loc >= ViserionXloc:
 
     # shift forward each of the bullet, this function will be called from the
     # game.py or the main.py It returns the points scored by hitting viserion
-    def updateBulletStatus(self,ViserionPresent):
+    def updateBulletStatus(self,ViserionPresent,ViserionXloc):
         bulletsToBeDeleted = []
         index = 0
         for loc in self.bulletList:
@@ -89,13 +121,13 @@ class Mandalorian(Person):
         if ViserionPresent:
             index = 0
             for loc in self.bulletList:
-                if hittingViser(loc):
+                if hittingViser(loc,ViserionXloc):
                     bulletsToBeDeleted.append(index)
                     incrementScore += 1
         
         for i in bulletsToBeDeleted:
             del self.bulletList[i]
- 
+         
         return incrementScore
 
             
@@ -114,10 +146,6 @@ class Mandalorian(Person):
     # increase the velocity , it will imitate the collision with the wall
     # because the impulse provided by the user up button will counteract the 
     # collision with the wall.
-
-    # checks if there is any collision.
-    # the usual moving speed of the grid will be small so that the frequency of
-    # painting it will also be small.
     
     def move(self, keyPressed):
          
@@ -135,6 +163,8 @@ class Mandalorian(Person):
         elif keyPressed in ['b', 'B']:
             fireBullet()
         
+        # the shield activation will be handled in game.py
+        
 
         if y>= configs.GridWidth-configs.MandaYLen:
             y -= 1
@@ -145,33 +175,6 @@ class Mandalorian(Person):
         if x<0:
             x -= self.velocity
         self.setLocation(x,y)
-
-        # check if there is any collision
-        for i in configs.MandaXLen:
-            for j in configs.MandaYLen:
-                
-                if grid[x+i][y+j] == '$':
-                    # change actual grid and numeric grid and ++ score
-
-                if grid[x+i][y+j] == 'z':
-                    if not beamSeen:
-                        beamseen = True
-                        # decrease live and step ahead of that beam so that in
-                        # next iteration you do not encounter the beam. Move the
-                        # background , do not move Manda
-
-                if grid[x+i][y+j] == 'B':
-                    if not bonusSeen:
-                        bonusSeen = True
-                        # speed up the game for ten seconds keep a check on time
-                        # so that we can stop it after 10 seconds, step ahead of
-                        # bonus.
-                if grid[x+i][y+j] == 'D':
-                    if not dragonSeen:
-                        dragonSeen = True
-                        # remove manda from screen and bring in the dragon to
-                        # the screen. Dragon needs to move in a wriggly manner. 
-
 '''
 Boss enemy of the game . Changes position according to position of Mandalorian
 and throws ice balls at him.
@@ -192,6 +195,7 @@ class Viserion(Person):
 
         # Tells if viser is present on the game screen
         self.present = False
+
     
    
    '''
@@ -207,8 +211,17 @@ class Viserion(Person):
        piece of the background after you have moved the ball to next location.
        
     '''
+
     def fireIceBalls(self):
         # trying the first method
 
+        if not self.present:
+            return 
+        x,y = self.getLocation()
+        y -= 5
         
+
+        # now return co-ordinates of the IceBall to be painted on the grid
+        return x,y
+
 

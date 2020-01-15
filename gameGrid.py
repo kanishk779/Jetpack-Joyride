@@ -82,9 +82,9 @@ class LargeGrid:
             self.numericGrid[0] = self.numericGrid[1] = \
             configs.skyId
         
-        obstacleInterval = 30
+        obstacleInterval = 40
         
-        # After every 30 character a obstacle/coins will appear 
+        # After every 40 character a obstacle/coins will appear 
         loops = int((W*N)/obstacleInterval)
         print("loops " + str(loops))
         # randomly generate the starting location of the obstacle/coins
@@ -106,6 +106,10 @@ class LargeGrid:
                     obj_type = configs.coinId
                 else:
                     magnetFound = True
+
+            if obj_type+1 == configs.iceBallId:
+                currentStartCol += obstacleInterval
+                continue
 
             for i in range(obstaclesSizes[obj_type][0]):
                 for j in range(obstaclesSizes[obj_type][1]):
@@ -176,6 +180,7 @@ class SmallGrid:
         bonusColor = Back.MAGENTA
         dragonColor = Back.Green
         magnetColor = Back.YELLOW
+        iceBallColor = Back.WHITE
 
         for i in range(configs.GridHeight):
             for j in range(configs.GridWidth):
@@ -200,6 +205,8 @@ class SmallGrid:
                     char = magnetColor + Fore.BLACK + 'M'
                 elif self.numericGrid[i][j] == configs.dragonId:
                     char = dragonColor + Fore.MAGENTA + 'D'
+                elif self.numericGrid[i][j] == configs.iceBallId:
+                    char = iceBallColor + Fore.BLACK + self.grid[i][j]
                 else:
                     char = skyColor + ' '
                 
