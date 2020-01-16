@@ -109,10 +109,21 @@ class Game:
                         if self.manda.shieldActive:
                             self.manda.shieldActive = False
                             self.manda.shieldPresent = False
+                        self.manda.dragonMode = True
 
 
+  
+    def magnetPresent(self):
+        stCol = self.gameGrid.largeGrid.startMagnetColumn
+        left = self.gameGrid.largeGrid.currentLeftColumn
+        right = self.gameGrid.largeGrid.currentRightColumn
 
-
+        if stCol == -1 :
+            return False
+        if stCol >= left and stcol <= right:
+            return True
+        else:
+            return False
 
     # change the underlying large numeric and actual grid
     def fireIceBalls(self):
@@ -133,19 +144,25 @@ class Game:
         # update location and place manda
         x,y = self.manda.getLocation()
         if x > configs.GridHeight - configs.MandaXLen:
-            self.manda.velocity = 0
+            self.manda.velocityY = 0
         else:
-            self.manda.velocity += self.manda.acceleration
-            x += self.manda.velocity
+            self.manda.velocityY += self.manda.acceleration
+            x += self.manda.velocityY
             if x<0:
                 x = 0
             if x > configs.GridHeight - configs.MandaXLen:
                 x = configs.GridHeight - configs.MandaXLen
 
-
-        for i in range(configs.MandaXLen):
-            for j in range(configs.MandaYLen):
-                self.gameGrid[x+i][y+j] = Back.GREEN + Fore.RED +\
+        if self.manda.dragonMode:
+            for i in range(configs.DragonXLen):
+                for j in range(configs.DragonYLen):
+                    dragon = self.manda.createDragon()
+                    self.gameGrid[x+i][y+j] = Back.GREEN + Fore.RED +\
+                        dragon[i][j]
+        else:
+            for i in range(configs.MandaXLen):
+                for j in range(configs.MandaYLen):
+                    self.gameGrid[x+i][y+j] = Back.GREEN + Fore.RED +\
                     self.manda.shape[i][j]
 
         # print Viserion if present

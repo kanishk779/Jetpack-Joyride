@@ -41,7 +41,8 @@ class Mandalorian(Person):
 
         # vertical acceleration and speed 
         self.acceleration = configs.gravity
-        self.velocity = 0
+        self.velocityX = 0
+        self.velocityY = 0
 
         # dragon form is on or not. Once it is on we need to cycle 
         self.dragonMode = False
@@ -159,7 +160,7 @@ class Mandalorian(Person):
         elif keyPressed in ['d', 'D']:
             y += 1
         elif keyPressed in ['w', 'W']:
-            self.velocity += configs.Impulse
+            self.velocityY += configs.Impulse
         elif keyPressed in ['b', 'B']:
             fireBullet()
         
@@ -171,9 +172,9 @@ class Mandalorian(Person):
         if y<0 :
             y += 1
         if x >= configs.GridHeight - configs.MandaXLen:
-            x -= self.velocity
+            x -= self.velocityY
         if x<0:
-            x -= self.velocity
+            x -= self.velocityY
         self.setLocation(x,y)
 '''
 Boss enemy of the game . Changes position according to position of Mandalorian

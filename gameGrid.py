@@ -10,6 +10,10 @@ class LargeGrid:
         self.currentLeftColumn = 0
         self.grid = []
         self.numericGrid = []
+        # stores the location of magnet in grid
+        self.startMagnetColumn= -1
+        self.magnetX = -1
+        self.magnetY = -1
     
     '''
     create the grid randomly
@@ -106,6 +110,7 @@ class LargeGrid:
                     obj_type = configs.coinId
                 else:
                     magnetFound = True
+                    self.startMagnetColumn = currentStartCol+y_start
 
             if obj_type+1 == configs.iceBallId:
                 currentStartCol += obstacleInterval
