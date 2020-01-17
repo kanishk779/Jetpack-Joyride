@@ -7,9 +7,8 @@ import time
 
 if __name__ == "__main__":
     manda = Mandalorian()
-    myGame = Game(manda)
     myGameGrid = SmallGrid()
-    my_screen = Screen(myGame)
+    my_screen = Screen()
     myGameGrid.initialiseLargeGrid(4)
     myGameGrid.loadSmallGrid()
     i = 100
@@ -17,7 +16,7 @@ if __name__ == "__main__":
     while i>0:
         i=i-1
         myGameGrid.progressGame(step)
-        print(myGameGrid.largeGrid.currentLeftColumn)
+        print('\033[0;0H')
         my_screen.generateScreen(myGameGrid)
-        time.sleep(.01)
+        time.sleep(.1)
 

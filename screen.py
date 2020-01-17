@@ -8,16 +8,15 @@ Provides the functionality of the game screen
 class Screen:
 
     # Obtains the game object
-    def __init__(self, game):
-        self.__game = game
-    
+    def __init__(self):
+        pass
     
 
     # print the header and gameGrid
     def generateScreen(self, gameGrid):
 
-        # first print the header
-        self.__game.printHeader()
+        # first print the header before calling this function
+        
         
         # load the grid
         gameGrid.loadSmallGrid()

@@ -120,7 +120,7 @@ class LargeGrid:
                 for j in range(obstaclesSizes[obj_type][1]):
                     self.grid[x_start+i][currentStartCol+ y_start+j] = obstacles[obj_type][i][j]
                     char = obstacles[obj_type][i][j] 
-                    if char in ['z','$','M','D','B']
+                    if char in ['z','$','M','D','B']:
                         self.numericGrid[x_start+i][currentStartCol+y_start+j]\
                          =  obj_type+1
 
@@ -183,7 +183,7 @@ class SmallGrid:
         beamColor1 = Back.YELLOW
         beamColor2 = Back.RED
         bonusColor = Back.MAGENTA
-        dragonColor = Back.Green
+        dragonColor = Back.GREEN
         magnetColor = Back.YELLOW
         iceBallColor = Back.WHITE
 

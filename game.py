@@ -1,6 +1,7 @@
 import numpy as np
 from creature import *
 from gameGrid import *
+from screen import *
 '''
 Provides various functionality of the game
 1. Render the screen every time and update various things
@@ -24,9 +25,6 @@ class Game:
         self.Viserion = Viserion()
 
 
-    def updateScore(self,newScore):
-        self.score = newScore
-
     def keepTime(self):
         if self.timeRemaining == 0:
             print("Sorry, you were not able to complete the game")
@@ -36,7 +34,7 @@ class Game:
             self.timeRemaining -= 1
         
 
-     # print the header
+    # print the header
     def printHeader(self):
         
         if self.Manda.shieldActive:
@@ -139,6 +137,7 @@ class Game:
     def gameLoop(self):
         # Progress game and use screen to paint the grid
         self.gameGrid.progressGame(1)
+        printHeader()
         self.screen.generateScreen()
 
         # update location and place manda
@@ -199,8 +198,24 @@ class Game:
                             l = self.gameGrid.largeGrid.currentLeftColumn
                             self.gameGrid.largeGrid.grid[x+i][l+y+j] = ' '
                             self.gameGrid.largeGrid.numericGrid[x+i][l+y+j] = 0
+                            self.score += configs.ObsDestroyScr 
                             hit = True
-                        if self.gameGrid.numericGrid[x+i][y+j] == configs. 
+                        if self.gameGrid.numericGrid[x+i][y+j] == configs.iceBallId:
+                            # delete the ball from the large grid.
+                            # we can change the way we have stored the Ice Ball
+                            hit = True
+                            x_start = min(0,x-configs.BallXLen)
+                            y_start = min(0,y-configs.BallYLen)
+                            l = self.gameGrid.largeGrid.currentLeftColumn
+                            self.score += configs.ObsDestroyScr
+                            for i in range(10):
+                                for j in range(10):
+                                    if x_start+i>=configs.gridHeight or y_start+j>= configs.gridWidth:
+                                        continue
+                                    if self.gameGrid.largeGrid.numericGrid[x_start+i][l+y_start+j] ==configs.iceBallId:
+                                        self.gameGrid.largeGrid.grid[x_start+i][l+y_start+j]=' '
+                                        self.gameGrid.largeGrid.numericGrid[x_start+i][l+y_start+j]=0 
+
 
                 if hit:
                     break
@@ -215,7 +230,7 @@ class Game:
 
         for loc in self.manda.bulletList:
             x,y = loc.getLocation()
-            self.gameGrid[x][y] = Back.GREEN + Fore.Magenta + self.manda.bullet
+            self.gameGrid[x][y] = Back.GREEN + Fore.MAGENTA + self.manda.bullet
 
         checkCollision()
 
