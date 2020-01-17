@@ -35,7 +35,9 @@ class Mandalorian(Person):
         self.shape = np.array(list(self.shape))
         self.shape = self.shape.reshape(3, 5)
         
-        self.bullet = 'o'
+        self.bullet = 'oo'
+        self.bullet = np.array(list(self.bullet))
+        self.bullet = self.bullet.reshape(1,2)
         # keep the list of the locations bullets fired by Manda 
         self.bulletList = []
 
@@ -90,7 +92,7 @@ class Mandalorian(Person):
         # don't fire bullets if they are outside the screen
         if y>= configs.GridWidth:
             return
-        loc = Location(1,1)
+        loc = Location(configs.BulletXLen,configs.BulletYLen) # need to pass the size of the bullets
         loc.setLocation(x,y)
         bulletList.append(loc)
 
@@ -99,20 +101,24 @@ class Mandalorian(Person):
         
 
     def hittingViser(self,loc,ViserionXloc):
-        return if loc.y_loc >= configs.GridWidth - configs.ViserionYLen and \
-                        loc.x_loc >= ViserionXloc:
+        x,y = loc.getLocation()
+        result = False
+        for i in range(configs.BulletXLen):
+            for j in range(configs.BulletYLen):
+                if x+i>=ViserionXloc and x+i<=ViserionXloc+configs.ViserionXLen:
+                    result |= y+j>= configs.GridWidth - configs.ViserionYLen
+        return result
+
 
     # shift forward each of the bullet, this function will be called from the
     # game.py or the main.py It returns the points scored by hitting viserion
     def updateBulletStatus(self,ViserionPresent,ViserionXloc):
-        bulletsToBeDeleted = []
-        index = 0
         for loc in self.bulletList:
-            loc.y_loc += 1
+            x,y = loc.getLocation()
+            y+= 1
             # check if the bullet is out of the grid
-            if loc.y_loc >= configs.GridWidth:
-                bulletsToBeDeleted.append(index)
-            index += 1
+            if y >= configs.GridWidth:
+                self.bulletList.remove(loc)
 
         '''
         If Viser is present than find out the bullets which are hitting
@@ -123,11 +129,8 @@ class Mandalorian(Person):
             index = 0
             for loc in self.bulletList:
                 if hittingViser(loc,ViserionXloc):
-                    bulletsToBeDeleted.append(index)
+                    self.bulletList.remove(loc)
                     incrementScore += 1
-        
-        for i in bulletsToBeDeleted:
-            del self.bulletList[i]
          
         return incrementScore
 

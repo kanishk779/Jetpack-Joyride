@@ -183,6 +183,27 @@ class Game:
         self.manda.updateBulletStatus(self.Viserion.present,x)
         self.score += incrementScore
 
+        # need to check if they are hitting ice ball or zappers
+        for loc in self.manda.bulletList:
+            x,y = loc.getLocation()
+            hit = False
+            zappers =\
+            [configs.horizontalBeamId,configs.verticalBeamId,configs.mainAngledBeamId,configs.offAngledBeamId]
+            for i in range(configs.BulletXLen):
+                for j in range(configs.BulletYLen):
+                    if hit:
+                        break
+                    # need to change the large grid
+                    if y+j< configs.GridWidth:
+                        if self.gameGrid.numericGrid[x+i][y+j] in zappers:
+                            l = self.gameGrid.largeGrid.currentLeftColumn
+                            self.gameGrid.largeGrid.grid[x+i][l+y+j] = ' '
+                            self.gameGrid.largeGrid.numericGrid[x+i][l+y+j] = 0
+                            hit = True
+                        if self.gameGrid.numericGrid[x+i][y+j] == configs. 
+
+                if hit:
+                    break
         # decrease the strength of the Viserion
         strength = self.Viserion.getStrength()
         strength -= incrementScore
