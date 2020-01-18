@@ -90,13 +90,15 @@ class LargeGrid:
         
         # After every 40 character a obstacle/coins will appear 
         loops = int((W*N)/obstacleInterval)
-        print("loops " + str(loops))
         # randomly generate the starting location of the obstacle/coins
         currentStartCol = 0
         dragonFound = False
         magnetFound = False
 
         for loop in range(loops):
+            if loop == 0:
+                currentStartCol += obstacleInterval
+                continue
             x_start = random.randrange(5 ,28, 1)
             y_start = random.randrange(5, 12, 1)
             obj_type = random.randrange(0,configs.NumberOfObstacles,1)

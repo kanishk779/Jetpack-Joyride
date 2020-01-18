@@ -66,6 +66,7 @@ class Game:
                     self.score += 1
 
                 if self.gameGrid.grid[x+i][y+j] == 'z':
+                    print('hello')
                     if self.manda.shield_active: 
                         # if shield is active than nothing happens to manda
                         continue
@@ -75,7 +76,10 @@ class Game:
                         # next iteration you do not encounter the beam. Move the
                         # background , do not move Manda
     
-                        
+                        # need to paint the background
+                        start_y = x - 11
+                        for i in range(28):
+                            pass
                         if self.manda.dragonMode:
                             self.gameGrid.progressGame(configs.DragonYLen+12)
                             self.manda.dragonMode = False
@@ -171,7 +175,10 @@ class Game:
                 for j in range(configs.MandaYLen):
                     assert type(x) == int,"x should be int"
                     #self.gameGrid.grid[x+i][y+j] = Back.GREEN + Fore.RED+self.manda.shape[i][j]
-                    print(Back.GREEN + Fore.RED+self.manda.shape[i][j],end='')
+                    if self.manda.shape[i][j] != ' ':
+                        print(Back.BLUE + Fore.RED+self.manda.shape[i][j],end='')
+                    else:
+                        print(Back.BLUE + ' ',end='')
                 cx += 1
                 print('\033['+str(cx)+';'+str(y)+'H',end='')
 
@@ -188,7 +195,11 @@ class Game:
             for i in range(configs.ViserionXLen):
                 for j in range(configs.ViserionYLen):
                     #self.gameGrid[vx+i][vy+j] = Back.YELLOW + Fore.BLACK +self.Viserion.shape[i][j]
-                    print(Back.YELLOW+Fore.BLACK+self.Viserion.shape[i][j],end='')
+                    if self.Viserion.shape[i][j] != ' ':
+                        print(Back.YELLOW+Fore.BLACK+self.Viserion.shape[i][j],end='')
+                    else:
+                        print(Back.BLUE+' ',end='')
+
                 cx += 1
                 print('\033['+str(cx)+';'+str(y)+'H',end='')
 
