@@ -259,4 +259,3 @@ class Game:
 
         print(Style.RESET_ALL)
         self.checkCollision()
-        self.keepTime()
