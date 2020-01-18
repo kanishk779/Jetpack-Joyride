@@ -14,7 +14,7 @@ class Location:
         self.__y_loc = y_loc
     
     def getLocation(self):
-        return self.__x_loc,self.__y_loc
+        return int(self.__x_loc),int(self.__y_loc)
 
 
 

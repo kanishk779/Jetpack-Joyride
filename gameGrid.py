@@ -97,7 +97,7 @@ class LargeGrid:
         magnetFound = False
 
         for loop in range(loops):
-            x_start = random.randrange(8 ,28, 1)
+            x_start = random.randrange(5 ,28, 1)
             y_start = random.randrange(5, 12, 1)
             obj_type = random.randrange(0,configs.NumberOfObstacles,1)
             if obj_type+1 == configs.dragonId:
@@ -218,13 +218,5 @@ class SmallGrid:
                 print(char,end='')
 
             print(Style.RESET_ALL+'')
-
-
-
         
-
-
-            
-
-
 

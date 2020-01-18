@@ -193,9 +193,9 @@ class Viserion(Person):
         self.shape =  "VISER  O  >-|-<  /\\ "
         self.shape = np.array(list(self.shape))
         self.shape = self.shape.reshape(4, 5)
-        self.ball = "  -   / \ ooooo \ /   -  "
-        self.ball = np.array(list(ball))
-        self.ball = ball.reshape(5,5)
+        self.ball = "  -   / \\ ooooo \\ /   -  "
+        self.ball = np.array(list(self.ball))
+        self.ball = self.ball.reshape(5,5)
 
         # Tells if viser is present on the game screen
         self.present = False

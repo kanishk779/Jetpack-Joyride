@@ -2,10 +2,10 @@
 # which are required throughout the project in one place
 
 MandaInitialLives = 3
-ViserionInialStrength = 20
+ViserionInitialStrength = 20
 GridWidth = 120
 GridHeight = 36
-gameDuration = 100
+gameDuration = 200
 coinId = 1
 horizontalBeamId = 2
 verticalBeamId = 3
@@ -33,3 +33,4 @@ DragonYLen = 20
 BulletXLen = 1
 BulletYLen = 2
 ObsDestroyScr = 5
+Xoffset = 2

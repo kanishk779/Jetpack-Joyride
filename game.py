@@ -1,3 +1,4 @@
+import math
 import numpy as np
 from creature import *
 from gameGrid import *
@@ -16,12 +17,13 @@ Provides various functionality of the game
 class Game:
 
     def __init__(self, Manda):
-        self.timeRemaining = configs.gameDuration
+        self.timeRemaining = int(configs.gameDuration)
         self.score = 0
-        self.Manda = Manda
+        self.manda = Manda
+        self.manda.obj_location.setLocation(configs.GridHeight-configs.MandaXLen,10)
         self.gameGrid = SmallGrid()
-        self.screen = Screen(self)
-        self.gameGrid.initialiseLargeGrid(4)
+        self.screen = Screen()
+        self.gameGrid.initialiseLargeGrid(8)
         self.Viserion = Viserion()
 
 
@@ -37,16 +39,13 @@ class Game:
     # print the header
     def printHeader(self):
         
-        if self.Manda.shieldActive:
+        if self.manda.shield_active:
             shieldStatus = "YES"
         else:
             shieldStatus = "NO"
-        print("")
-        print("TIME LEFT : " + str(self.timeRemaining) +
-                "\t\t\t\t\t\t     SHIELD ACTIVE : " + shieldStatus)
+        print("TIME LEFT : {a:5d} \t\t\t\t\t\t      SHIELD ACTIVE : {p}".format(a = self.timeRemaining,p = shieldStatus))
         print("YOUR SCORE IS : " + str(self.score) +
-              "\t\t\t\t\t\t      LIVES LEFT : " + str(self.Manda.getStrength()))
-        print("")
+              "\t\t\t\t\t\t      LIVES LEFT : " + str(self.manda.getStrength()))
 
     
     # check if there is any collision, x,y are location of manda    
@@ -54,20 +53,20 @@ class Game:
         beamSeen = False
         dragonSeen = False
         bonusSeen = False
-        x,y = self.manda.getLocation()
+        x,y = self.manda.obj_location.getLocation()
         stCol = self.gameGrid.largeGrid.currentLeftColumn
 
-        for i in configs.MandaXLen:
-            for j in configs.MandaYLen:
+        for i in range(configs.MandaXLen):
+            for j in range(configs.MandaYLen):
                 
-                if self.gameGrid[x+i][y+j] == '$':
+                if self.gameGrid.grid[x+i][y+j] == '$':
                     # change actual self.gameGrid and numeric self.gameGrid and ++ score
                     self.gameGrid.largeGrid.grid[x+i][stCol+y+j] = ' '
                     self.gameGrid.largeGrid.numeric[x+i][stCol+y+j] = 0
                     self.score += 1
 
-                if self.gameGrid[x+i][y+j] == 'z':
-                    if self.manda.shieldActive: 
+                if self.gameGrid.grid[x+i][y+j] == 'z':
+                    if self.manda.shield_active: 
                         # if shield is active than nothing happens to manda
                         continue
                     if not beamSeen:
@@ -86,7 +85,7 @@ class Game:
                             lives -= 1
                             self.manda.setStrength(lives)
 
-                if self.gameGrid[x+i][y+j] == 'B':
+                if self.gameGrid.grid[x+i][y+j] == 'B':
                     if not bonusSeen:
                         bonusSeen = True
                         # speed up the game for 5 seconds keep a check on time
@@ -99,14 +98,14 @@ class Game:
                         else:
                             self.gameGrid.progressGame(configs.MandaYLen+3) # progress by 8 columns
                 
-                if self.gameGrid[x+i][y+j] == 'D':
+                if self.gameGrid.grid[x+i][y+j] == 'D':
                     if not dragonSeen:
                         dragonSeen = True
                         # remove manda from screen and bring in the dragon to
                         # the screen. Dragon needs to move in a wriggly manner. 
-                        if self.manda.shieldActive:
-                            self.manda.shieldActive = False
-                            self.manda.shieldPresent = False
+                        if self.manda.shield_active:
+                            self.manda.shield_active = False
+                            self.manda.shield_present = False
                         self.manda.dragonMode = True
 
 
@@ -136,12 +135,13 @@ class Game:
 
     def gameLoop(self):
         # Progress game and use screen to paint the grid
+        print('\033[2;0H',end='')
         self.gameGrid.progressGame(1)
-        printHeader()
-        self.screen.generateScreen()
+        self.printHeader()
+        self.screen.generateScreen(self.gameGrid)
 
         # update location and place manda
-        x,y = self.manda.getLocation()
+        x,y = self.manda.obj_location.getLocation()
         if x > configs.GridHeight - configs.MandaXLen:
             self.manda.velocityY = 0
         else:
@@ -151,33 +151,51 @@ class Game:
                 x = 0
             if x > configs.GridHeight - configs.MandaXLen:
                 x = configs.GridHeight - configs.MandaXLen
-
+        
+        x = int(math.ceil(x))
+        x += configs.Xoffset
+        y = int(math.ceil(y))
+        # we need to move the cursor to these position
+        print('\033['+str(x)+';'+str(y)+'H',end = '')
+        cx = x
         if self.manda.dragonMode:
             for i in range(configs.DragonXLen):
                 for j in range(configs.DragonYLen):
                     dragon = self.manda.createDragon()
-                    self.gameGrid[x+i][y+j] = Back.GREEN + Fore.RED +\
-                        dragon[i][j]
+                    #self.gameGrid.grid[x+i][y+j] = Back.GREEN + Fore.RED+dragon[i][j]
+                    print(Back.GREEN + Fore.RED+self.manda.shape[i][j],end='')
+                cx += 1
+                print('\033['+str(cx)+';'+str(y)+'H',end='')
         else:
             for i in range(configs.MandaXLen):
                 for j in range(configs.MandaYLen):
-                    self.gameGrid[x+i][y+j] = Back.GREEN + Fore.RED +\
-                    self.manda.shape[i][j]
+                    assert type(x) == int,"x should be int"
+                    #self.gameGrid.grid[x+i][y+j] = Back.GREEN + Fore.RED+self.manda.shape[i][j]
+                    print(Back.GREEN + Fore.RED+self.manda.shape[i][j],end='')
+                cx += 1
+                print('\033['+str(cx)+';'+str(y)+'H',end='')
 
         # print Viserion if present
         if self.Viserion.present:
-            vx,vy = self.Viserion.getLocation()
-            mx,my = self.manda.getLocation()
+            vx,vy = self.Viserion.obj_location.getLocation()
+            mx,my = self.manda.obj_location.getLocation()
 
             vx = mx
+            vx += configs.Xoffset
+            cx = vx
+            print('\033['+str(vx)+';'+str(vy)+'H',end = '')
 
             for i in range(configs.ViserionXLen):
                 for j in range(configs.ViserionYLen):
-                    self.gameGrid[vx+i][vy+j] = Back.YELLOW + Fore.BLACK +\
-                        self.Viserion.shape[i][j]
+                    #self.gameGrid[vx+i][vy+j] = Back.YELLOW + Fore.BLACK +self.Viserion.shape[i][j]
+                    print(Back.YELLOW+Fore.BLACK+self.Viserion.shape[i][j],end='')
+                cx += 1
+                print('\033['+str(cx)+';'+str(y)+'H',end='')
+
+
         
         # update status of bullets and print them
-        x,y = self.Viserion.getLocation()
+        x,y = self.Viserion.obj_location.getLocation()
         incrementScore =\
         self.manda.updateBulletStatus(self.Viserion.present,x)
         self.score += incrementScore
@@ -230,7 +248,15 @@ class Game:
 
         for loc in self.manda.bulletList:
             x,y = loc.getLocation()
-            self.gameGrid[x][y] = Back.GREEN + Fore.MAGENTA + self.manda.bullet
+            x += configs.Xoffset
+            print('\033['+str(x)+';'+str(y)+'H',end='')
+            for i in range(configs.BulletXLen):
+                for j in range(configs.BulletYLen):
+                    print(Back.GREEN+Fore.MAGENTA+self.manda.bullet[i][j],end='')
+                x += 1
+                print('\033['+str(x)+';'+str(y)+'H',end='')
 
-        checkCollision()
 
+        print(Style.RESET_ALL)
+        self.checkCollision()
+        self.keepTime()
