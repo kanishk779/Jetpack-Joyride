@@ -16,9 +16,10 @@ Provides various functionality of the game
 '''
 class Game:
 
-    def __init__(self, Manda):
+    def __init__(self, Manda,keys):
         self.timeRemaining = int(configs.gameDuration)
         self.score = 0
+        self.keys = keys
         self.manda = Manda
         self.manda.obj_location.setLocation(configs.GridHeight-configs.MandaXLen,10)
         self.gameGrid = SmallGrid()
@@ -29,6 +30,8 @@ class Game:
 
     def keepTime(self):
         if self.timeRemaining == 0:
+            keys.flush()
+            keys.originalTerm()
             print("Sorry, you were not able to complete the game")
             print("GAME OVER")
             quit()
@@ -55,18 +58,22 @@ class Game:
         bonusSeen = False
         x,y = self.manda.obj_location.getLocation()
         stCol = self.gameGrid.largeGrid.currentLeftColumn
-
-        for i in range(configs.MandaXLen):
-            for j in range(configs.MandaYLen):
+        if self.manda.dragonMode:
+            xLen = configs.DragonXLen
+            yLen = configs.DragonYLen
+        else:
+            xLen = configs.MandaXLen
+            yLen = configs.MandaYLen
+        for i in range(xLen):
+            for j in range(yLen):
                 
                 if self.gameGrid.grid[x+i][y+j] == '$':
                     # change actual self.gameGrid and numeric self.gameGrid and ++ score
                     self.gameGrid.largeGrid.grid[x+i][stCol+y+j] = ' '
-                    self.gameGrid.largeGrid.numeric[x+i][stCol+y+j] = 0
+                    self.gameGrid.largeGrid.numericGrid[x+i][stCol+y+j] = 0
                     self.score += 1
 
                 if self.gameGrid.grid[x+i][y+j] == 'z':
-                    print('hello')
                     if self.manda.shield_active: 
                         # if shield is active than nothing happens to manda
                         continue
@@ -146,35 +153,49 @@ class Game:
 
         # update location and place manda
         x,y = self.manda.obj_location.getLocation()
-        if x > configs.GridHeight - configs.MandaXLen:
+        if self.manda.dragonMode:
+            XLen = configs.DragonXLen
+            YLen = configs.DragonYLen
+        else:
+            XLen = configs.MandaXLen
+            YLen = configs.MandaYLen
+        if x >= configs.GridHeight - XLen-1:
             self.manda.velocityY = 0
+            x = configs.GridHeight - XLen
         else:
             self.manda.velocityY += self.manda.acceleration
             x += self.manda.velocityY
             if x<0:
                 x = 0
-            if x > configs.GridHeight - configs.MandaXLen:
-                x = configs.GridHeight - configs.MandaXLen
+            if x > configs.GridHeight - XLen:
+                x = configs.GridHeight - XLen
         
         x = int(math.ceil(x))
-        x += configs.Xoffset
         y = int(math.ceil(y))
+        assert x>=0,"should be greater than 0"
+        assert x<=configs.GridHeight-XLen,"should be smaller than grid height"
+        assert y>=0,"y should be greater than 0"
+        assert y<=configs.GridWidth-YLen,"y should be < gridheight"
+        self.manda.obj_location.setLocation(x,y)
+
+        x += configs.Xoffset
         # we need to move the cursor to these position
         print('\033['+str(x)+';'+str(y)+'H',end = '')
         cx = x
         if self.manda.dragonMode:
+            dragon = self.manda.createDragon()
             for i in range(configs.DragonXLen):
                 for j in range(configs.DragonYLen):
-                    dragon = self.manda.createDragon()
-                    #self.gameGrid.grid[x+i][y+j] = Back.GREEN + Fore.RED+dragon[i][j]
-                    print(Back.GREEN + Fore.RED+self.manda.shape[i][j],end='')
+                    if dragon[i][j] != ' ':
+                        print(Back.BLUE + Fore.RED+dragon[i][j],end='')
+                    else:
+                        print(Back.BLUE + ' ',end='')
                 cx += 1
                 print('\033['+str(cx)+';'+str(y)+'H',end='')
         else:
             for i in range(configs.MandaXLen):
                 for j in range(configs.MandaYLen):
                     assert type(x) == int,"x should be int"
-                    #self.gameGrid.grid[x+i][y+j] = Back.GREEN + Fore.RED+self.manda.shape[i][j]
                     if self.manda.shape[i][j] != ' ':
                         print(Back.BLUE + Fore.RED+self.manda.shape[i][j],end='')
                     else:
@@ -188,6 +209,7 @@ class Game:
             mx,my = self.manda.obj_location.getLocation()
 
             vx = mx
+            self.Viserion.obj_location.setLocation(vx,vy)
             vx += configs.Xoffset
             cx = vx
             print('\033['+str(vx)+';'+str(vy)+'H',end = '')
@@ -223,6 +245,7 @@ class Game:
                         break
                     # need to change the large grid
                     if y+j< configs.GridWidth:
+                        # TODO need to change the logic of hitting zappers
                         if self.gameGrid.numericGrid[x+i][y+j] in zappers:
                             l = self.gameGrid.largeGrid.currentLeftColumn
                             self.gameGrid.largeGrid.grid[x+i][l+y+j] = ' '
@@ -251,10 +274,12 @@ class Game:
         # decrease the strength of the Viserion
         strength = self.Viserion.getStrength()
         strength -= incrementScore
-
+        self.Viserion.setStrength(strength)
         if strength <= 0:
             print('\n THE GAME IS OVER YOU WON!!')
             print('\n YOU HAVE ACHIEVED THE IMPOSSIBLE')
+            keys.flush()
+            keys.originalTerm()
             quit()
 
         for loc in self.manda.bulletList:
@@ -263,7 +288,7 @@ class Game:
             print('\033['+str(x)+';'+str(y)+'H',end='')
             for i in range(configs.BulletXLen):
                 for j in range(configs.BulletYLen):
-                    print(Back.GREEN+Fore.MAGENTA+self.manda.bullet[i][j],end='')
+                    print(Back.GREEN+Fore.BLACK+self.manda.bullet[i][j],end='')
                 x += 1
                 print('\033['+str(x)+';'+str(y)+'H',end='')
 

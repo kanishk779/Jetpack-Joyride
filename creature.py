@@ -1,4 +1,4 @@
-import numpy as np
+
 import collections
 import configs
 from godObject import *
@@ -73,6 +73,7 @@ class Mandalorian(Person):
         dragon = np.array(list(dragon))
         dragon = dragon.reshape(3,20)
         self.dragonIndex = (self.dragonIndex+1)%6
+        # print(self.dragonIndex,end='')
         return dragon
 
 
@@ -83,7 +84,7 @@ class Mandalorian(Person):
     '''
     def fireBullet(self):
         # get the position of Manda, that will be position of bullet
-        x,y = self.getLocation()
+        x,y = self.obj_location.getLocation()
         x += 1
         if self.dragonMode:
             y += 20
@@ -94,7 +95,7 @@ class Mandalorian(Person):
             return
         loc = Location(configs.BulletXLen,configs.BulletYLen) # need to pass the size of the bullets
         loc.setLocation(x,y)
-        bulletList.append(loc)
+        self.bulletList.append(loc)
 
         # TODO print the bullet on the screen this will be done in game.py
 
@@ -115,7 +116,8 @@ class Mandalorian(Person):
     def updateBulletStatus(self,ViserionPresent,ViserionXloc):
         for loc in self.bulletList:
             x,y = loc.getLocation()
-            y+= 1
+            y+= 2
+            loc.setLocation(x,y)
             # check if the bullet is out of the grid
             if y >= configs.GridWidth:
                 self.bulletList.remove(loc)
@@ -157,28 +159,30 @@ class Mandalorian(Person):
         # other things will be done in game.py
         
         # now place manda on grid after updating the location of manda
-        x,y = self.getLocation()
+        x,y = self.obj_location.getLocation()
         if keyPressed in ['a', 'A']:
             y -= 1
         elif keyPressed in ['d', 'D']:
             y += 1
         elif keyPressed in ['w', 'W']:
+            #print('up pressed')
             self.velocityY += configs.Impulse
         elif keyPressed in ['b', 'B']:
-            fireBullet()
+            self.fireBullet()
         
         # the shield activation will be handled in game.py
-        
-
+        x += self.velocityY
         if y>= configs.GridWidth-configs.MandaYLen:
             y -= 1
         if y<0 :
             y += 1
         if x >= configs.GridHeight - configs.MandaXLen:
-            x -= self.velocityY
-        if x<0:
-            x -= self.velocityY
-        self.setLocation(x,y)
+            x = configs.GridHeight - configs.MandaXLen
+            
+        if x<=0:
+            x = 0
+        self.obj_location.setLocation(x,y)
+
 '''
 Boss enemy of the game . Changes position according to position of Mandalorian
 and throws ice balls at him.
@@ -221,7 +225,7 @@ class Viserion(Person):
 
         if not self.present:
             return 
-        x,y = self.getLocation()
+        x,y = self.obj_location.getLocation()
         y -= 5
         
 

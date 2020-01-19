@@ -18,19 +18,12 @@ def keypress(keyin):
     Identifies which key was pressed
     '''
 
-    if keyin in ('Q', 'q'):
-        return -1
-    if keyin in ('D', 'd'):
-        return 1
-    if keyin in ('A', 'a'):
-        return 2
-    if keyin in ('W', 'w'):
-        return 3
+    if keyin in ('B', 'b', 'D', 'd', 'A', 'a','W' , 'w', ' ', 'q'):
+        return keyin
+    else:
+        return None
 
-    return 0
-
-
-class NonBLockingInput:
+class NonBlockingInput:
     '''
     class to deal with non-blocking input
     '''
@@ -50,7 +43,7 @@ class NonBLockingInput:
         '''
         tty.setcbreak(sys.stdin.fileno())
 
-    def OriginalTerm(self):
+    def originalTerm(self):
         '''
         Sets terminal back to original state
         '''
