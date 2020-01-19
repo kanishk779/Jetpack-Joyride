@@ -2,7 +2,7 @@
 # which are required throughout the project in one place
 
 MandaInitialLives = 3
-ViserionInitialStrength = 20
+ViserionInitialStrength = 40
 GridWidth = 120
 GridHeight = 36
 gameDuration = 200
@@ -26,11 +26,15 @@ ViserionXLen = 4
 ViserionYLen = 5
 BallXLen = 5
 BallYLen = 5
-Impulse = -2 
-gravity = 0.5
+Impulse = -2.5 
+gravity = 0.7
 DragonXLen = 3
 DragonYLen = 20
 BulletXLen = 1
 BulletYLen = 2
 ObsDestroyScr = 5
 Xoffset = 2
+period = 10
+rate = 0.01
+viserBulletDuration = 5
+speed = False

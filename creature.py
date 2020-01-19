@@ -23,7 +23,7 @@ Hero of the game
 '''
 class Mandalorian(Person):
 
-    def __init__(self, shield_present=False, shield_active=False):
+    def __init__(self, shield_present=True, shield_active=False):
         super().__init__(configs.MandaInitialLives,
                 configs.MandaId,configs.MandaXLen,configs.MandaYLen)
         
@@ -130,7 +130,7 @@ class Mandalorian(Person):
         if ViserionPresent:
             index = 0
             for loc in self.bulletList:
-                if hittingViser(loc,ViserionXloc):
+                if self.hittingViser(loc,ViserionXloc):
                     self.bulletList.remove(loc)
                     incrementScore += 1
          

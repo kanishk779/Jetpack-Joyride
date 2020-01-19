@@ -6,16 +6,36 @@ import time
 
 if __name__ == "__main__":
     manda = Mandalorian()
-    period = 10
+    period = configs.period
     i = 0
     clear()
     keys = NonBlockingInput()
     keys.nonBlockingTerm()
     myGame = Game(manda,keys)
+    ViserionEntry = int(0.8*configs.gameDuration)
+    bulletTime = 0
+    speedTime = 0
     while True:
         i += 1
         if i == period:
             myGame.keepTime()
+            speedTime += 1
+            if configs.speed:
+                speedTime += 1
+                if speedTime == 5:
+                    speedTime = 0
+                    configs.period = 10
+                    configs.rate = 0.01
+                    configs.speed = False
+            # entry time of Viserion
+            if myGame.Viserion.present:
+                # throw an ice ball
+                bulletTime += 1
+                if bulletTime == configs.viserBulletDuration:
+                    myGame.fireIceBalls()
+                    bulletTime = 0
+            if myGame.timeRemaining == ViserionEntry:
+                myGame.Viserion.present = True
             i = 0
         if keys.keyboardHit():
             #keys.flush()
@@ -26,5 +46,5 @@ if __name__ == "__main__":
             else:
                 manda.move(inp)
         myGame.gameLoop()
-        time.sleep(.01)
+        time.sleep(configs.rate)
 

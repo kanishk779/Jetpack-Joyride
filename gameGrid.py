@@ -136,10 +136,15 @@ class SmallGrid:
     
     def __init__(self):
         self.largeGrid = LargeGrid()
-        self.grid = [[0 for j in range(configs.GridWidth)] for i in\
+        self.grid = [['0' for j in range(configs.GridWidth)] for i in\
             range(configs.GridHeight)]
         self.numericGrid = [[0 for j in range(configs.GridWidth)] for i in \
             range(configs.GridHeight)]
+        self.grid = np.array(list(self.grid))
+        self.grid = self.grid.reshape(configs.GridHeight,configs.GridWidth)
+        self.numericGrid = np.array(list(self.numericGrid))
+        self.numericGrid =\
+        self.numericGrid.reshape(configs.GridHeight,configs.GridWidth)
         self.N = 0
 
     # creates the large grid. This needs to be called only once.
@@ -167,14 +172,35 @@ class SmallGrid:
             (self.largeGrid.currentRightColumn -step + W*self.N)%(W*self.N)
 
     def loadSmallGrid(self):
-        
+        l = self.largeGrid.currentLeftColumn
+        r = self.largeGrid.currentRightColumn
+        W = configs.GridWidth
+        assert l>=0 and l<W*self.N, "l correct"
+        assert r>=0 and r<W*self.N, "r correct"
         for i in range(configs.GridHeight):
-            for j in range(self.largeGrid.currentLeftColumn,self.largeGrid.currentRightColumn):
-                self.grid[i][j-self.largeGrid.currentLeftColumn] = \
-                self.largeGrid.grid[i][j]
+            if r>l:
+                for j in range(self.largeGrid.currentLeftColumn,self.largeGrid.currentRightColumn):
+                    self.grid[i][j-self.largeGrid.currentLeftColumn] = \
+                    self.largeGrid.grid[i][j]
 
-                self.numericGrid[i][j - self.largeGrid.currentLeftColumn] = \
-                self.largeGrid.numericGrid[i][j]
+                    self.numericGrid[i][j - self.largeGrid.currentLeftColumn] = \
+                    self.largeGrid.numericGrid[i][j]
+            else:
+                cnt = 0
+                for j in range(l,configs.GridWidth*self.N):
+                    cnt += 1
+                    self.grid[i][j-self.largeGrid.currentLeftColumn] = \
+                    self.largeGrid.grid[i][j]
+
+                    self.numericGrid[i][j - self.largeGrid.currentLeftColumn] = \
+                    self.largeGrid.numericGrid[i][j]
+                for j in range(r):
+                    self.grid[i][cnt+j] = \
+                    self.largeGrid.grid[i][j]
+
+                    self.numericGrid[i][cnt+j] = \
+                    self.largeGrid.numericGrid[i][j]
+
 
     # Renders the small screen using colors(colorama)
     def printSmallGrid(self):
@@ -187,7 +213,7 @@ class SmallGrid:
         bonusColor = Back.MAGENTA
         dragonColor = Back.GREEN
         magnetColor = Back.YELLOW
-        iceBallColor = Back.WHITE
+        iceBallColor = Back.BLUE
 
         for i in range(configs.GridHeight):
             for j in range(configs.GridWidth):
