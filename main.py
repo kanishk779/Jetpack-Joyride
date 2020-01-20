@@ -15,10 +15,24 @@ if __name__ == "__main__":
     ViserionEntry = int(0.8*configs.gameDuration)
     bulletTime = 0
     speedTime = 0
+    shieldActivateTime = 0
+    timeFromLastShield = configs.shieldReactivate
     while True:
         i += 1
         if i == period:
             myGame.keepTime()
+            if not manda.shield_active:
+                if timeFromLastShield == configs.shieldReactivate:
+                    manda.shield_present = True
+                else:
+                    timeFromLastShield += 1
+            else:
+                shieldActivateTime += 1
+                if shieldActivateTime == configs.shieldTime:
+                    manda.shield_present = False
+                    manda.shield_active = False
+                    timeFromLastShield = 0
+                    shieldActivateTime = 0
             speedTime += 1
             if configs.speed:
                 speedTime += 1
@@ -44,7 +58,11 @@ if __name__ == "__main__":
             if inp is None:
                 pass
             else:
-                manda.move(inp)
+                if inp == ' ':
+                    if manda.shield_present:
+                        manda.shield_active = True
+                else:
+                    manda.move(inp)
         myGame.gameLoop()
         time.sleep(configs.rate)
 

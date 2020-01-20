@@ -35,6 +35,10 @@ class Mandalorian(Person):
         self.shape = np.array(list(self.shape))
         self.shape = self.shape.reshape(3, 5)
         
+        self.shieldShape = "  O |>-|-|  /\\|"
+        self.shieldShape = np.array(list(self.shieldShape))
+        self.shieldShape = self.shieldShape.reshape(3,5)
+
         self.bullet = 'oo'
         self.bullet = np.array(list(self.bullet))
         self.bullet = self.bullet.reshape(1,2)
@@ -114,26 +118,33 @@ class Mandalorian(Person):
     # shift forward each of the bullet, this function will be called from the
     # game.py or the main.py It returns the points scored by hitting viserion
     def updateBulletStatus(self,ViserionPresent,ViserionXloc):
+        index = []
+        cnt = 0
         for loc in self.bulletList:
             x,y = loc.getLocation()
-            y+= 2
+            y += 1
             loc.setLocation(x,y)
             # check if the bullet is out of the grid
-            if y >= configs.GridWidth:
-                self.bulletList.remove(loc)
+            if y < configs.GridWidth:
+                index.append(cnt)
+            cnt += 1
 
         '''
         If Viser is present than find out the bullets which are hitting
         him and delete those bullets, also update the game score.
         '''
+        cnt = 0
         incrementScore = 0
         if ViserionPresent:
-            index = 0
             for loc in self.bulletList:
                 if self.hittingViser(loc,ViserionXloc):
-                    self.bulletList.remove(loc)
                     incrementScore += 1
-         
+                else:
+                    index.append(cnt)
+                cnt += 1
+        index = set(index)
+        temp = [self.bulletList[i] for i in index]
+        self.bulletList = temp[:]
         return incrementScore
 
             

@@ -45,10 +45,14 @@ class Game:
     def printHeader(self):
         
         if self.manda.shield_active:
-            shieldStatus = "YES"
+            shieldActive = "YES"
         else:
-            shieldStatus = "NO"
-        print("TIME LEFT : {a:5d} \t\t\t\t\t\t      SHIELD ACTIVE : {p}".format(a = self.timeRemaining,p = shieldStatus))
+            shieldActive = "NO "
+        if self.manda.shield_present:
+            shieldPresent = "YES"
+        else:
+            shieldPresent = "NO "
+        print("TIME LEFT : {t:5d} \t\t\tSHIELD PRESENT : {p}     \t SHIELD ACTIVE : {a}".format(t = self.timeRemaining,p=shieldPresent, a =shieldActive))
         print("YOUR SCORE IS : " + str(self.score) +
               "\t\t\t\t\t\t      LIVES LEFT : " + str(self.manda.getStrength()))
 
@@ -64,18 +68,20 @@ class Game:
         else:
             xLen = configs.MandaXLen
             yLen = configs.MandaYLen
+        H = configs.GridWidth
+        W = configs.GridHeight
         for i in range(xLen):
             for j in range(yLen):
                 tempx = -1
                 tempy = -1
                 if x+i<0:
                     tempx=0
-                if x+i>=36:
-                    tempx=35
+                if x+i>=H:
+                    tempx=H - 1
                 if y+j<0:
                     tempy=0
-                if y+j>=120:
-                    tempy=199
+                if y+j>=W:
+                    tempy=W-1
                 if tempx != -1:
                     x = tempx-i
                 if tempy != -1:
@@ -87,14 +93,14 @@ class Game:
                     xend = x+i + 4
                     if xstart<0:
                         xstart = 0
-                    if xend >= 36:
-                        xend = 36
+                    if xend >= H:
+                        xend = H
                     ystart = y+j - 11
                     yend = y+j +12
                     if ystart<0:
                         ystart = 0
-                    if yend>=120:
-                        yend = 120
+                    if yend>=W:
+                        yend = W
                     H = configs.GridHeight
                     N = self.gameGrid.N
                     total = H*N
@@ -105,13 +111,27 @@ class Game:
                             self.gameGrid.largeGrid.numericGrid[xx][k] = 0
                     self.score += 20
                     hit = True
-                if x+i>=0 and x+i<36 and self.gameGrid.grid[x+i][y+j] == 'D':
+                if x+i>=0 and x+i<H and self.gameGrid.grid[x+i][y+j] == 'D':
                     hit = True
                     # remove manda from screen and bring in the dragon to the screen. 
                     if self.manda.shield_active:
                         self.manda.shield_active = False
                         self.manda.shield_present = False
                     self.manda.dragonMode = True
+                if x+i>=0 and x+i<H and self.gameGrid.numericGrid[x+i][y+j] == configs.bonusId:
+                    hit = True
+                    # speed up the game for 5 seconds keep a check on time
+                    # so that we can stop it after 5 seconds, step ahead of
+                    # bonus.
+
+                    if self.manda.dragonMode:
+                        self.gameGrid.progressGame(configs.DragonYLen+3)
+                    else:
+                        self.gameGrid.progressGame(configs.MandaYLen+3) # progress by 8 columns
+
+                    configs.rate = 0.005
+                    configs.period = 20
+                    configs.speed = True
 
                 if self.gameGrid.grid[x+i][y+j] == 'z':
                     if self.manda.shield_active: 
@@ -130,27 +150,16 @@ class Game:
                         self.gameGrid.progressGame(configs.MandaYLen+12) # progress by 17 column
                         lives = self.manda.getStrength()
                         lives -= 1
+                       
+                        self.manda.setStrength(lives)
                         if lives == 0:
                             print('You lost , your score is : '+str(self.score))
                             self.keys.originalTerm()
                             quit()
-                        self.manda.setStrength(lives)
 
-                if x+i>=0 and x+i<36 and self.gameGrid.numericGrid[x+i][y+j] == configs.bonusId:
-                    hit = True
-                    # speed up the game for 5 seconds keep a check on time
-                    # so that we can stop it after 5 seconds, step ahead of
-                    # bonus.
-
-                    if self.manda.dragonMode:
-                        self.gameGrid.progressGame(configs.DragonYLen+3)
-                    else:
-                        self.gameGrid.progressGame(configs.MandaYLen+3) # progress by 8 columns
-
-                    configs.rate = 0.005
-                    configs.period = 20
-                    configs.speed = True
-                if x+i>=0 and x+i<36 and self.gameGrid.numericGrid[x+i][y+j] == configs.iceBallId:
+                if x+i>=0 and x+i<H and self.gameGrid.numericGrid[x+i][y+j] == configs.iceBallId:
+                    if self.manda.shield_active:
+                        continue
                     hit = True
                     if self.manda.dragonMode:
                         self.gameGrid.progressGame(configs.DragonYLen+7)
@@ -261,12 +270,20 @@ class Game:
                         print(Back.BLUE + ' ',end='')
                 cx += 1
                 print('\033['+str(cx)+';'+str(y)+'H',end='')
+        elif self.manda.shield_active:
+            for i in range(configs.MandaXLen):
+                for j in range(configs.MandaYLen):
+                    if self.manda.shieldShape[i][j] != ' ':
+                        print(Back.BLUE+Fore.BLACK+self.manda.shieldShape[i][j],end='')
+                    else:
+                        print(Back.BLUE+' ',end='')
+                cx += 1
+                print('\033['+str(cx)+';'+str(y)+'H',end='')
         else:
             for i in range(configs.MandaXLen):
                 for j in range(configs.MandaYLen):
-                    assert type(x) == int,"x should be int"
                     if self.manda.shape[i][j] != ' ':
-                        print(Back.BLUE + Fore.BLACK+self.manda.shape[i][j],end='')
+                        print(Back.BLUE +Fore.BLACK+self.manda.shape[i][j],end='')
                     else:
                         print(Back.BLUE + ' ',end='')
                 cx += 1
@@ -328,10 +345,10 @@ class Game:
                             # delete the ball from the large grid.
                             # we can change the way we have stored the Ice Ball
                             hit = True
-                            print('iceeeee')
                             x_start = min(0,x-configs.BallXLen)
                             y_start = min(0,y-configs.BallYLen)
                             l = self.gameGrid.largeGrid.currentLeftColumn
+                            t = 't'
                             self.score += configs.ObsDestroyScr
                             for i in range(15):
                                 for j in range(15):
@@ -339,7 +356,6 @@ class Game:
                                         continue
                                     k =(l+y_start+j)%total 
                                     if self.gameGrid.largeGrid.numericGrid[x_start+i][k] == configs.iceBallId:
-                                        print('ice ball')
                                         self.gameGrid.largeGrid.grid[x_start+i][k]=' '
                                         self.gameGrid.largeGrid.numericGrid[x_start+i][k]=0 
 
@@ -360,6 +376,8 @@ class Game:
         for loc in self.manda.bulletList:
             x,y = loc.getLocation()
             x += configs.Xoffset
+            if y>= configs.GridWidth:
+                continue
             print('\033['+str(x)+';'+str(y)+'H',end='')
             for i in range(configs.BulletXLen):
                 for j in range(configs.BulletYLen):
