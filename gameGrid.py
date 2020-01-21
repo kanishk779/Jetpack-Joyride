@@ -26,7 +26,6 @@ class LargeGrid:
         verticalBeam = "zzzzzz"
         mainAngledBeam = "z      z      z      z      z      z"
         offAngledBeam = "     z    z    z    z    z    z     "
-        bonus = "BBBB"
         shield = "SSSS"
         dragon = "DDDD"
         magnet = "MMMM"
@@ -36,7 +35,6 @@ class LargeGrid:
         verticalBeam = np.array(list(verticalBeam))
         mainAngledBeam = np.array(list(mainAngledBeam))
         offAngledBeam = np.array(list(offAngledBeam))
-        bonus = np.array(list(bonus))
         # shield is not going to appear as an obstacle in the game but it will
         # automatically fill in after every 60 seconds and the manda will be
         # able to use it once it is available.
@@ -49,15 +47,14 @@ class LargeGrid:
         verticalBeam = verticalBeam.reshape(6,1)
         mainAngledBeam = mainAngledBeam.reshape(6,6)
         offAngledBeam = offAngledBeam.reshape(6,6)
-        bonus = bonus.reshape(2,2)
         dragon = dragon.reshape(2,2)
         magnet = magnet.reshape(2,2)
 
 
         obstaclesSizes = \
-        [[3,11],[3,11],[6,1],[6,6],[6,6],[2,2],[2,2],[2,2]]
+        [[3,11],[3,11],[6,1],[6,6],[6,6],[2,2],[2,2]]
         obstacles = [coins, horizontalBeam, verticalBeam, mainAngledBeam,
-                offAngledBeam, bonus,dragon,magnet]
+                offAngledBeam,dragon,magnet]
         
         '''
         we need to make a H*W*N grid which means N repetition of H*W grid
@@ -65,7 +62,7 @@ class LargeGrid:
         H = configs.GridHeight
         W = configs.GridWidth
         
-        self.grid = ['0' for i in range(H*W*N)]
+        self.grid = [' ' for i in range(H*W*N)]
         self.grid = np.array(self.grid)
         self.grid = self.grid.reshape(H,W*N)
 
@@ -86,9 +83,9 @@ class LargeGrid:
             self.numericGrid[0] = self.numericGrid[1] = \
             configs.skyId
         
-        obstacleInterval = 40
+        obstacleInterval = 30
         
-        # After every 40 character a obstacle/coins will appear 
+        # After every 30 character a obstacle/coins will appear 
         loops = int((W*N)/obstacleInterval)
         # randomly generate the starting location of the obstacle/coins
         currentStartCol = 0
@@ -114,15 +111,11 @@ class LargeGrid:
                     magnetFound = True
                     self.startMagnetColumn = currentStartCol+y_start
 
-            if obj_type+1 == configs.iceBallId:
-                currentStartCol += obstacleInterval
-                continue
-
             for i in range(obstaclesSizes[obj_type][0]):
                 for j in range(obstaclesSizes[obj_type][1]):
                     self.grid[x_start+i][currentStartCol+ y_start+j] = obstacles[obj_type][i][j]
                     char = obstacles[obj_type][i][j] 
-                    if char in ['z','$','M','D','B']:
+                    if char in ['z','$','M','D']:
                         self.numericGrid[x_start+i][currentStartCol+y_start+j]\
                          =  obj_type+1
 
@@ -187,7 +180,7 @@ class SmallGrid:
                     self.largeGrid.numericGrid[i][j]
             else:
                 cnt = 0
-                for j in range(l,configs.GridWidth*self.N):
+                for j in range(l,W*self.N):
                     cnt += 1
                     self.grid[i][j-self.largeGrid.currentLeftColumn] = \
                     self.largeGrid.grid[i][j]
@@ -232,8 +225,6 @@ class SmallGrid:
                     char = groundColor + Fore.RED + 'X'
                 elif self.numericGrid[i][j] == configs.skyId:
                     char = skyColor + Fore.RED + 'X'
-                elif self.numericGrid[i][j] == configs.bonusId:
-                    char = bonusColor + Fore.GREEN + 'B'
                 elif self.numericGrid[i][j] == configs.magnetId:
                     char = magnetColor + Fore.BLACK + 'M'
                 elif self.numericGrid[i][j] == configs.dragonId:

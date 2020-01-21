@@ -18,7 +18,7 @@ def keypress(keyin):
     Identifies which key was pressed
     '''
 
-    if keyin in ('B', 'b', 'D', 'd', 'A', 'a','W' , 'w', ' ', 'q'):
+    if keyin in ('B', 'b', 'D', 'd', 'A', 'a','W' , 'w', ' ', 'q','v', 'V'):
         return keyin
     else:
         return None

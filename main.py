@@ -6,7 +6,6 @@ import time
 
 if __name__ == "__main__":
     manda = Mandalorian()
-    period = configs.period
     i = 0
     clear()
     keys = NonBlockingInput()
@@ -19,7 +18,7 @@ if __name__ == "__main__":
     timeFromLastShield = configs.shieldReactivate
     while True:
         i += 1
-        if i == period:
+        if i == configs.period:
             myGame.keepTime()
             if not manda.shield_active:
                 if timeFromLastShield == configs.shieldReactivate:
@@ -33,7 +32,6 @@ if __name__ == "__main__":
                     manda.shield_active = False
                     timeFromLastShield = 0
                     shieldActivateTime = 0
-            speedTime += 1
             if configs.speed:
                 speedTime += 1
                 if speedTime == 5:
@@ -61,6 +59,11 @@ if __name__ == "__main__":
                 if inp == ' ':
                     if manda.shield_present:
                         manda.shield_active = True
+                elif inp == 'v' or inp == 'V':
+                    print('V pressed')
+                    configs.speed = True
+                    configs.period = 40
+                    configs.rate = 0.0025
                 else:
                     manda.move(inp)
         myGame.gameLoop()

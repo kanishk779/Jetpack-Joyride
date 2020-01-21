@@ -68,8 +68,10 @@ class Game:
         else:
             xLen = configs.MandaXLen
             yLen = configs.MandaYLen
-        H = configs.GridWidth
-        W = configs.GridHeight
+        H = configs.GridHeight
+        W = configs.GridWidth
+        N = self.gameGrid.N
+        total = N*W
         for i in range(xLen):
             for j in range(yLen):
                 tempx = -1
@@ -86,29 +88,29 @@ class Game:
                     x = tempx-i
                 if tempy != -1:
                     y = tempy-j
-                
+                 
                 if self.gameGrid.grid[x+i][y+j] == '$':
                     # change actual self.gameGrid and numeric self.gameGrid and ++ score
-                    xstart = x+i - 3
-                    xend = x+i + 4
+                    xstart = x+i - 8
+                    xend = x+i + 8
                     if xstart<0:
                         xstart = 0
                     if xend >= H:
                         xend = H
-                    ystart = y+j - 11
-                    yend = y+j +12
+                    ystart = y+j - 10
+                    yend = y+j +18
                     if ystart<0:
                         ystart = 0
                     if yend>=W:
                         yend = W
-                    H = configs.GridHeight
-                    N = self.gameGrid.N
-                    total = H*N
                     for xx in range(xstart,xend):
                         for yy in range(ystart,yend):
                             k = (stCol+yy)%(total)
-                            self.gameGrid.largeGrid.grid[xx][k] = ' '
-                            self.gameGrid.largeGrid.numericGrid[xx][k] = 0
+                            if self.gameGrid.largeGrid.grid[xx][k] == 'X':
+                                pass
+                            else:
+                                self.gameGrid.largeGrid.grid[xx][k] = ' '
+                                self.gameGrid.largeGrid.numericGrid[xx][k] = 0
                     self.score += 20
                     hit = True
                 if x+i>=0 and x+i<H and self.gameGrid.grid[x+i][y+j] == 'D':
@@ -118,20 +120,6 @@ class Game:
                         self.manda.shield_active = False
                         self.manda.shield_present = False
                     self.manda.dragonMode = True
-                if x+i>=0 and x+i<H and self.gameGrid.numericGrid[x+i][y+j] == configs.bonusId:
-                    hit = True
-                    # speed up the game for 5 seconds keep a check on time
-                    # so that we can stop it after 5 seconds, step ahead of
-                    # bonus.
-
-                    if self.manda.dragonMode:
-                        self.gameGrid.progressGame(configs.DragonYLen+3)
-                    else:
-                        self.gameGrid.progressGame(configs.MandaYLen+3) # progress by 8 columns
-
-                    configs.rate = 0.005
-                    configs.period = 20
-                    configs.speed = True
 
                 if self.gameGrid.grid[x+i][y+j] == 'z':
                     if self.manda.shield_active: 
@@ -157,7 +145,7 @@ class Game:
                             self.keys.originalTerm()
                             quit()
 
-                if x+i>=0 and x+i<H and self.gameGrid.numericGrid[x+i][y+j] == configs.iceBallId:
+                if self.gameGrid.numericGrid[x+i][y+j] == configs.iceBallId:
                     if self.manda.shield_active:
                         continue
                     hit = True
@@ -198,9 +186,9 @@ class Game:
     def fireIceBalls(self):
         x,y = self.Viserion.fireIceBalls()
         stCol = self.gameGrid.largeGrid.currentLeftColumn
-        H = configs.GridWidth
+        W = configs.GridWidth
         N = self.gameGrid.N
-        total = H*N
+        total = W*N
         x -= 3
         if x<2:
             x = 2
@@ -255,6 +243,7 @@ class Game:
 
         self.manda.obj_location.setLocation(x,y)
         x += configs.Xoffset
+        self.checkCollision()
         # we need to move the cursor to these position
         if x<4:
             x=5
@@ -322,9 +311,10 @@ class Game:
         for loc in self.manda.bulletList:
             x,y = loc.getLocation()
             hit = False
-            H = configs.GridHeight
+            W = configs.GridWidth
             N = self.gameGrid.N
-            total = H*N
+            H = configs.GridHeight
+            total = W*N
             zappers =\
             [configs.horizontalBeamId,configs.verticalBeamId,configs.mainAngledBeamId,configs.offAngledBeamId]
             for i in range(configs.BulletXLen):
@@ -337,29 +327,105 @@ class Game:
                         if self.gameGrid.numericGrid[x+i][y+j] in zappers:
                             l = self.gameGrid.largeGrid.currentLeftColumn
                             k = (l+y+j)%total
-                            self.gameGrid.largeGrid.grid[x+i][k] = ' '
-                            self.gameGrid.largeGrid.numericGrid[x+i][k] = 0
+                            Id = self.gameGrid.largeGrid.numericGrid[x+i][k]
+                            if Id == configs.horizontalBeamId:
+                                ind = k
+                                while self.gameGrid.largeGrid.grid[x+i][ind] =='z':
+                                    self.gameGrid.largeGrid.grid[x+i][ind] = ' '
+                                    self.gameGrid.largeGrid.numericGrid[x+i][ind] = 0
+                                    ind += 1
+                                    ind = ind%total
+                                ind = k-1
+                                ind = (ind+total)%total
+                                while self.gameGrid.largeGrid.grid[x+i][ind] =='z':
+                                    self.gameGrid.largeGrid.grid[x+i][ind] = ' '
+                                    self.gameGrid.largeGrid.numericGrid[x+i][ind]= 0
+                                    ind -= 1
+                                    ind = (ind+total)%total
+                            elif Id == configs.verticalBeamId:
+                                ind = x+i
+                                while self.gameGrid.largeGrid.grid[ind][k] =='z':
+                                    self.gameGrid.largeGrid.grid[ind][k] = ' '
+                                    self.gameGrid.largeGrid.numericGrid[ind][k]=0
+                                    ind += 1
+                                    if ind>=H:
+                                        break
+                                ind = x+i-1
+                                ind = (ind+total)%total
+                                while self.gameGrid.largeGrid.grid[ind][k] =='z':
+                                    self.gameGrid.largeGrid.grid[ind][k] = ' '
+                                    self.gameGrid.largeGrid.numericGrid[ind][k]=0
+                                    ind -= 1
+                                    if ind<0:
+                                        break
+                            elif Id == configs.mainAngledBeamId:
+                                indx = x+i
+                                indy = k
+                                while self.gameGrid.largeGrid.grid[indx][indy]== 'z':
+                                    self.gameGrid.largeGrid.grid[indx][indy] = ' '
+                                    self.gameGrid.largeGrid.numericGrid[indx][indy]=0
+                                    indx += 1
+                                    if indx>=H:
+                                        break
+                                    indy += 1
+                                    indy = indy%total
+                                indx = x+i-1
+                                indy = k-1
+                                if indx<0:
+                                    indx=0
+                                indy = (indy+total)%total
+                                while self.gameGrid.largeGrid.grid[indx][indy]== 'z':
+                                    self.gameGrid.largeGrid.grid[indx][indy] = ' '
+                                    self.gameGrid.largeGrid.numericGrid[indx][indy]=0
+                                    indx -= 1
+                                    if indx<0:
+                                        break
+                                    indy -= 1
+                                    indy = (indy+total)%total
+                            elif Id == configs.offAngledBeamId:
+                                indx = x+i
+                                indy = k
+                                while self.gameGrid.largeGrid.grid[indx][indy]== 'z':
+                                    self.gameGrid.largeGrid.grid[indx][indy] = ' '
+                                    self.gameGrid.largeGrid.numericGrid[indx][indy]=0
+                                    indx -= 1
+                                    indy += 1
+                                    if indx<0:
+                                        break
+                                    indy = (indy+total)%total
+                                indx = x+i+1
+                                if indx >= H:
+                                    indx = H-1
+                                indy =k-1
+                                indy = (indy+total)%total
+                                while self.gameGrid.largeGrid.grid[indx][indy]== 'z':
+                                    self.gameGrid.largeGrid.grid[indx][indy] = ' '
+                                    self.gameGrid.largeGrid.numericGrid[indx][indy] = 0
+                                    indx += 1
+                                    indy -= 1
+                                    if indx>=H:
+                                        break
+                                    indy = (indy+total)%total
+
                             self.score += configs.ObsDestroyScr 
                             hit = True
+                        '''
                         if self.gameGrid.numericGrid[x+i][y+j] == configs.iceBallId:
-                            # delete the ball from the large grid.
-                            # we can change the way we have stored the Ice Ball
                             hit = True
-                            x_start = min(0,x-configs.BallXLen)
-                            y_start = min(0,y-configs.BallYLen)
+                            x_start = min(0,x-configs.BallXLen-10)
+                            y_start = min(0,y-configs.BallYLen-10)
                             l = self.gameGrid.largeGrid.currentLeftColumn
-                            t = 't'
                             self.score += configs.ObsDestroyScr
-                            for i in range(15):
-                                for j in range(15):
+                            for i in range(25):
+                                for j in range(25):
                                     if x_start+i>=configs.GridHeight or y_start+j>= configs.GridWidth:
                                         continue
                                     k =(l+y_start+j)%total 
                                     if self.gameGrid.largeGrid.numericGrid[x_start+i][k] == configs.iceBallId:
                                         self.gameGrid.largeGrid.grid[x_start+i][k]=' '
                                         self.gameGrid.largeGrid.numericGrid[x_start+i][k]=0 
-
-
+        
+                        '''
                 if hit:
                     break
         # decrease the strength of the Viserion
@@ -387,4 +453,3 @@ class Game:
 
 
         print(Style.RESET_ALL)
-        self.checkCollision()
