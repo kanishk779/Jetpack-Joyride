@@ -116,8 +116,9 @@ class Mandalorian(Person):
         result = False
         for i in range(configs.BulletXLen):
             for j in range(configs.BulletYLen):
-                if x + i >= ViserionXloc and x + i <= ViserionXloc + configs.ViserionXLen:
-                    result |= y + j >= configs.GridWidth - configs.ViserionYLen
+                if x + i >= ViserionXloc and x + i <= ViserionXloc
+                +configs.DragonXLen:
+                    result |= y + j >= configs.GridWidth - configs.DragonYLen
         return result
 
     # shift forward each of the bullet, this function will be called from the
@@ -140,6 +141,12 @@ class Mandalorian(Person):
         cnt = 0
         incrementScore = 0
         if ViserionPresent:
+            if ViserionDragon:
+                XLen = configs.ViserionXLen
+                YLen = configs.ViserionYLen
+            else:
+                XLen = configs.DragonXLen
+                YLen = configs.DragonYLen
             for loc in self.bulletList:
                 if self.hittingViser(loc, ViserionXloc):
                     incrementScore += 1
