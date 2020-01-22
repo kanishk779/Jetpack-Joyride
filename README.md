@@ -24,5 +24,40 @@ python, and there could be nothing better than making a game.
 2. Location - this class is used to describe the location and size of an object.
 3. Person - every living character in the game inherit from this class.
 4. Mandalorian - this represents the main character of the game.
-5. 
-
+5. Viserion - this represents the main Villian (Boss enemy) of the game.
+6. Game - this class controls the whole game, it has various functions to
+   control the flow of the game.
+7. LargeGrid - this class represents the background grid of the game which has 
+   different object randomly generated as obstacles in the game.
+8. SmallGrid - this class represents the current background of the game which is
+   loaded from the large grid.
+9. Screen - this class is responsible for loading and rendering the game screen
+   at each iteration.
+10. Utility - this class helps to get the non blocking input from the user.
+## How to run this game
+```
+pip3 install -r requirements.txt
+python3 main.py
+```
+## Controls
+1. w for jumping up
+2. a for moving left
+3. d for moving right
+4. b for shooting bullets
+5. v for speeding up the game(for some amount of time)
+6. '.' space bar for obtaining the shield if it is present. It refills after
+   fixed amount of time.
+## Features
+1. Collect coins to increase your score.
+2. If the bullets hit the fire beam they(beams) are destroyed and it adds to your score.
+3. If the player hits the beams than his life is reduced.
+4. The player can take the Dragon Bonus shown by 'D' which turn him to a dragon.
+5. If the player hits a fire beam and he is in dragon mode than he is changed
+   back to normal player without decreasing the life.
+6. The player can use the shield to protect him from obstacles.
+7. The magnet which appears somewhere in the middle of the game pulls the player
+   up.
+8. The boss enemy appears at the end, which is a dragon and shoots Ice balls at
+   the player which he must dodge, otherwise his life will be reduced.
+9. The boss enemy follows the player.
+10. You win the game after defeating the boss enemy and rescuing Yoda.

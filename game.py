@@ -18,19 +18,19 @@ Provides various functionality of the game
 
 class Game:
     def __init__(self, Manda, keys):
-        self.timeRemaining = int(configs.gameDuration)
+        self.timeRemaining = int(configs.GAMEDURATION)
         self.score = 0
         self.keys = keys
         self.manda = Manda
         self.manda.obj_location.setLocation(
-            configs.GridHeight - configs.MandaXLen, 10)
+            configs.GRIDHEIGHT - configs.MANDAXLEN, 10)
         self.gameGrid = SmallGrid()
         self.screen = Screen()
         self.gameGrid.initialiseLargeGrid(10)
         self.Viserion = Viserion()
         self.Viserion.obj_location.setLocation(
-            configs.GridHeight - configs.DragonXLen,
-            configs.GridWidth - configs.DragonYLen)
+            configs.GRIDHEIGHT - configs.DRAGONXLEN,
+            configs.GRIDWIDTH - configs.DRAGONYLEN)
 
     def keepTime(self):
         if self.timeRemaining == 0:
@@ -67,13 +67,13 @@ class Game:
         x, y = self.manda.obj_location.getLocation()
         stCol = self.gameGrid.largeGrid.currentLeftColumn
         if self.manda.dragonMode:
-            xLen = configs.DragonXLen
-            yLen = configs.DragonYLen
+            xLen = configs.DRAGONXLEN
+            yLen = configs.DRAGONYLEN
         else:
-            xLen = configs.MandaXLen
-            yLen = configs.MandaYLen
-        H = configs.GridHeight
-        W = configs.GridWidth
+            xLen = configs.MANDAXLEN
+            yLen = configs.MANDAYLEN
+        H = configs.GRIDHEIGHT
+        W = configs.GRIDWIDTH
         N = self.gameGrid.N
         total = N * W
         for i in range(xLen):
@@ -120,7 +120,7 @@ class Game:
                     self.score += 20
                     hit = True
                 if x+i>=0 and x+i<H and self.gameGrid.grid[x+i][y+j] == 'D' and\
-                self.gameGrid.numericGrid[x+i][y+j] == configs.dragonId:
+                self.gameGrid.numericGrid[x+i][y+j] == configs.DRAGONID:
                     hit = True
                     # remove manda from screen and bring in the dragon to the screen.
                     if self.manda.shield_active:
@@ -139,10 +139,10 @@ class Game:
                     # background , do not move Manda
 
                     if self.manda.dragonMode:
-                        self.gameGrid.progressGame(configs.DragonYLen + 12)
+                        self.gameGrid.progressGame(configs.DRAGONYLEN + 12)
                         self.manda.dragonMode = False
                     else:
-                        self.gameGrid.progressGame(configs.MandaYLen +
+                        self.gameGrid.progressGame(configs.MANDAYLEN +
                                                    12)  # progress by 17 column
                         lives = self.manda.getStrength()
                         lives -= 1
@@ -155,15 +155,15 @@ class Game:
                             quit()
 
                 if self.gameGrid.numericGrid[x + i][y +
-                                                    j] == configs.iceBallId:
+                                                    j] == configs.ICEBALLID:
                     if self.manda.shield_active:
                         continue
                     hit = True
                     if self.manda.dragonMode:
-                        self.gameGrid.progressGame(configs.DragonYLen + 7)
+                        self.gameGrid.progressGame(configs.DRAGONYLEN + 7)
                         self.manda.dragonMode = False
                     else:
-                        self.gameGrid.progressGame(configs.MandaYLen +
+                        self.gameGrid.progressGame(configs.MANDAYLEN +
                                                    7)  # progress by 17 column
                         lives = self.manda.getStrength()
                         lives -= 1
@@ -189,7 +189,7 @@ class Game:
         if stCol >= left and stCol <= right:
             stCol -= left
             startY = max(0, stCol - 15)
-            endY = min(configs.GridWidth - 1, stCol + 10)
+            endY = min(configs.GRIDWIDTH - 1, stCol + 10)
             x, y = self.manda.obj_location.getLocation()
             if y > startY and y < endY:
                 return True
@@ -200,35 +200,35 @@ class Game:
 
     def magnetAttract(self):
         if self.magnetPresent():
-            configs.gravity = -0.5
+            configs.GRAVITY = -0.5
             x, y = self.manda.obj_location.getLocation()
             x -= 2
             x = max(2, x)
             self.manda.obj_location.setLocation(x, y)
         else:
-            configs.gravity = 1
+            configs.GRAVITY = 1
 
     # change the underlying large numeric and actual grid
     def fireIceBalls(self):
         x, y = self.Viserion.fireIceBalls()
         stCol = self.gameGrid.largeGrid.currentLeftColumn
-        W = configs.GridWidth
+        W = configs.GRIDWIDTH
         N = self.gameGrid.N
         total = W * N
         x -= 3
         if x < 2:
             x = 2
-        for i in range(configs.BallXLen):
-            for j in range(configs.BallYLen):
+        for i in range(configs.BALLXLEN):
+            for j in range(configs.BALLYLEN):
                 if x + i < 0:
                     x = -i
-                if x + i >= configs.GridHeight:
-                    x = -i + configs.GridHeight - configs.BallXLen
+                if x + i >= configs.GRIDHEIGHT:
+                    x = -i + configs.GRIDHEIGHT - configs.BALLXLEN
                 k = (stCol + y + j) % (total)
                 self.gameGrid.largeGrid.grid[x +
                                              i][k] = self.Viserion.ball[i][j]
                 self.gameGrid.largeGrid.numericGrid[x +
-                                                    i][k] = configs.iceBallId
+                                                    i][k] = configs.ICEBALLID
 
     # emulates the game loop
 
@@ -242,36 +242,36 @@ class Game:
         # update location and place manda
         x, y = self.manda.obj_location.getLocation()
         if self.manda.dragonMode:
-            XLen = configs.DragonXLen
-            YLen = configs.DragonYLen
+            XLen = configs.DRAGONXLEN
+            YLen = configs.DRAGONYLEN
         else:
-            XLen = configs.MandaXLen
-            YLen = configs.MandaYLen
-        if x >= configs.GridHeight - XLen - 1:
+            XLen = configs.MANDAXLEN
+            YLen = configs.MANDAYLEN
+        if x >= configs.GRIDHEIGHT - XLen - 1:
             if not self.magnetPresent():
                 self.manda.velocityY = 0
-            x = configs.GridHeight - XLen
+            x = configs.GRIDHEIGHT - XLen
         else:
-            self.manda.velocityY += configs.gravity
+            self.manda.velocityY += configs.GRAVITY
             x += self.manda.velocityY
             if x < 0:
                 x = 0
-            if x > configs.GridHeight - XLen:
-                x = configs.GridHeight - XLen
+            if x > configs.GRIDHEIGHT - XLen:
+                x = configs.GRIDHEIGHT - XLen
 
         x = int(math.ceil(x))
         y = int(math.ceil(y))
         if x < 2:
             x = 2
-        if x > (configs.GridHeight - XLen):
-            x = configs.GridHeight - XLen
+        if x > (configs.GRIDHEIGHT - XLen):
+            x = configs.GRIDHEIGHT - XLen
         if y < 0:
             y = 0
-        if y > (configs.GridWidth - YLen):
-            y = configs.GridWidth - YLen
+        if y > (configs.GRIDWIDTH - YLen):
+            y = configs.GRIDWIDTH - YLen
 
         self.manda.obj_location.setLocation(x, y)
-        x += configs.Xoffset
+        x += configs.XOFFSET
         self.checkCollision()
         # we need to move the cursor to these position
         if x < 4:
@@ -280,8 +280,8 @@ class Game:
         cx = x
         if self.manda.dragonMode:
             dragon = self.manda.createDragon()
-            for i in range(configs.DragonXLen):
-                for j in range(configs.DragonYLen):
+            for i in range(configs.DRAGONXLEN):
+                for j in range(configs.DRAGONYLEN):
                     if dragon[i][j] != ' ':
                         print(Back.BLUE + Fore.BLACK + dragon[i][j], end='')
                     else:
@@ -289,8 +289,8 @@ class Game:
                 cx += 1
                 print('\033[' + str(cx) + ';' + str(y) + 'H', end='')
         elif self.manda.shield_active:
-            for i in range(configs.MandaXLen):
-                for j in range(configs.MandaYLen):
+            for i in range(configs.MANDAXLEN):
+                for j in range(configs.MANDAYLEN):
                     if self.manda.shieldShape[i][j] != ' ':
                         print(Back.BLUE + Fore.BLACK +
                               self.manda.shieldShape[i][j],
@@ -300,8 +300,8 @@ class Game:
                 cx += 1
                 print('\033[' + str(cx) + ';' + str(y) + 'H', end='')
         else:
-            for i in range(configs.MandaXLen):
-                for j in range(configs.MandaYLen):
+            for i in range(configs.MANDAXLEN):
+                for j in range(configs.MANDAYLEN):
                     if self.manda.shape[i][j] != ' ':
                         print(Back.BLUE + Fore.BLACK + self.manda.shape[i][j],
                               end='')
@@ -317,12 +317,12 @@ class Game:
 
             vx = mx
             self.Viserion.obj_location.setLocation(vx, vy)
-            vx += configs.Xoffset
+            vx += configs.XOFFSET
             cx = vx
             print('\033[' + str(vx) + ';' + str(vy) + 'H', end='')
             shape = self.Viserion.createDragon()
-            for i in range(configs.DragonXLen):
-                for j in range(configs.DragonYLen):
+            for i in range(configs.DRAGONXLEN):
+                for j in range(configs.DRAGONYLEN):
                     if shape[i][j] != ' ':
                         print(Back.BLUE + Fore.BLACK + shape[i][j], end='')
                     else:
@@ -341,24 +341,24 @@ class Game:
         for loc in self.manda.bulletList:
             x, y = loc.getLocation()
             hit = False
-            W = configs.GridWidth
+            W = configs.GRIDWIDTH
             N = self.gameGrid.N
-            H = configs.GridHeight
+            H = configs.GRIDHEIGHT
             total = W * N
             zappers =\
-            [configs.horizontalBeamId,configs.verticalBeamId,configs.mainAngledBeamId,configs.offAngledBeamId]
-            for i in range(configs.BulletXLen):
-                for j in range(configs.BulletYLen):
+            [configs.HORIZONTALBEAMID,configs.VERTICALBEAMID,configs.MAINANGLEDBEAMID,configs.OFFANGLEDBEAMID]
+            for i in range(configs.BULLETXLEN):
+                for j in range(configs.BULLETYLEN):
                     if hit:
                         break
                     # need to change the large grid
-                    if y + j < configs.GridWidth:
+                    if y + j < configs.GRIDWIDTH:
 
                         if self.gameGrid.numericGrid[x + i][y + j] in zappers:
                             l = self.gameGrid.largeGrid.currentLeftColumn
                             k = (l + y + j) % total
                             Id = self.gameGrid.largeGrid.numericGrid[x + i][k]
-                            if Id == configs.horizontalBeamId:
+                            if Id == configs.HORIZONTALBEAMID:
                                 ind = k
                                 while self.gameGrid.largeGrid.grid[
                                         x + i][ind] == 'z':
@@ -378,7 +378,7 @@ class Game:
                                         x + i][ind] = 0
                                     ind -= 1
                                     ind = (ind + total) % total
-                            elif Id == configs.verticalBeamId:
+                            elif Id == configs.VERTICALBEAMID:
                                 ind = x + i
                                 while self.gameGrid.largeGrid.grid[ind][
                                         k] == 'z':
@@ -398,7 +398,7 @@ class Game:
                                     ind -= 1
                                     if ind < 0:
                                         break
-                            elif Id == configs.mainAngledBeamId:
+                            elif Id == configs.MAINANGLEDBEAMID:
                                 indx = x + i
                                 indy = k
                                 while self.gameGrid.largeGrid.grid[indx][
@@ -428,7 +428,7 @@ class Game:
                                         break
                                     indy -= 1
                                     indy = (indy + total) % total
-                            elif Id == configs.offAngledBeamId:
+                            elif Id == configs.OFFANGLEDBEAMID:
                                 indx = x + i
                                 indy = k
                                 while self.gameGrid.largeGrid.grid[indx][
@@ -459,7 +459,7 @@ class Game:
                                         break
                                     indy = (indy + total) % total
 
-                            self.score += configs.ObsDestroyScr
+                            self.score += configs.OBSDESTROYSCR
                             hit = True
                 if hit:
                     break
@@ -476,12 +476,12 @@ class Game:
 
         for loc in self.manda.bulletList:
             x, y = loc.getLocation()
-            x += configs.Xoffset
-            if y >= configs.GridWidth:
+            x += configs.XOFFSET
+            if y >= configs.GRIDWIDTH:
                 continue
             print('\033[' + str(x) + ';' + str(y) + 'H', end='')
-            for i in range(configs.BulletXLen):
-                for j in range(configs.BulletYLen):
+            for i in range(configs.BULLETXLEN):
+                for j in range(configs.BULLETYLEN):
                     print(Back.GREEN + Fore.BLACK + self.manda.bullet[i][j],
                           end='')
                 x += 1

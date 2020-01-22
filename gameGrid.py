@@ -6,7 +6,7 @@ from colorama import Fore, Back, Style
 
 class LargeGrid:
     def __init__(self):
-        self.currentRightColumn = configs.GridWidth
+        self.currentRightColumn = configs.GRIDWIDTH
         self.currentLeftColumn = 0
         self.grid = []
         self.numericGrid = []
@@ -56,8 +56,8 @@ class LargeGrid:
         '''
         we need to make a H*W*N grid which means N repetition of H*W grid
         '''
-        H = configs.GridHeight
-        W = configs.GridWidth
+        H = configs.GRIDHEIGHT
+        W = configs.GRIDWIDTH
 
         self.grid = [' ' for i in range(H * W * N)]
         self.grid = np.array(self.grid)
@@ -71,13 +71,13 @@ class LargeGrid:
         for i in range(W * N):
             self.grid[H - 1][i] = self.grid[H - 2][i] = 'X'
             self.numericGrid[H-1][i] = self.numericGrid[H-2][i] =\
-            configs.groundId
+            configs.GROUNDID
 
         # create the sky
         for i in range(W * N):
             self.grid[0][i] = self.grid[1][i] = 'X'
             self.numericGrid[0] = self.numericGrid[1] = \
-            configs.skyId
+            configs.SKYID
 
         obstacleInterval = 30
 
@@ -96,28 +96,28 @@ class LargeGrid:
             y_start1 = random.randrange(5, 8, 1)
             x_start2 = random.randrange(20, 28, 1)
             y_start2 = random.randrange(9, 12, 1)
-            obj_type1 = random.randrange(0, configs.NumberOfObstacles, 1)
-            obj_type2 = random.randrange(0, configs.NumberOfObstacles, 1)
+            obj_type1 = random.randrange(0, configs.NUMBEROFOBSTACLES, 1)
+            obj_type2 = random.randrange(0, configs.NUMBEROFOBSTACLES, 1)
 
-            if obj_type1 + 1 == configs.dragonId:
+            if obj_type1 + 1 == configs.DRAGONID:
                 if dragonFound:
-                    obj_type1 = configs.coinId
+                    obj_type1 = configs.COINID
                 else:
                     dragonFound = True
-            if obj_type1 + 1 == configs.magnetId:
+            if obj_type1 + 1 == configs.MAGNETID:
                 if magnetFound:
-                    obj_type1 = configs.coinId
+                    obj_type1 = configs.COINID
                 else:
                     magnetFound = True
                     self.startMagnetColumn = currentStartCol + y_start1
-            if obj_type2 + 1 == configs.dragonId:
+            if obj_type2 + 1 == configs.DRAGONID:
                 if dragonFound:
-                    obj_type2 = configs.coinId
+                    obj_type2 = configs.COINID
                 else:
                     dragonFound = True
-            if obj_type2 + 1 == configs.magnetId:
+            if obj_type2 + 1 == configs.MAGNETID:
                 if magnetFound:
-                    obj_type2 = configs.coinId
+                    obj_type2 = configs.COINID
                 else:
                     magnetFound = True
                     self.startMagnetColumn = currentStartCol + y_start2
@@ -151,15 +151,15 @@ It will also manage the large Grid.
 class SmallGrid:
     def __init__(self):
         self.largeGrid = LargeGrid()
-        self.grid = [['0' for j in range(configs.GridWidth)] for i in\
-            range(configs.GridHeight)]
-        self.numericGrid = [[0 for j in range(configs.GridWidth)] for i in \
-            range(configs.GridHeight)]
+        self.grid = [['0' for j in range(configs.GRIDWIDTH)] for i in\
+            range(configs.GRIDHEIGHT)]
+        self.numericGrid = [[0 for j in range(configs.GRIDWIDTH)] for i in \
+            range(configs.GRIDHEIGHT)]
         self.grid = np.array(list(self.grid))
-        self.grid = self.grid.reshape(configs.GridHeight, configs.GridWidth)
+        self.grid = self.grid.reshape(configs.GRIDHEIGHT, configs.GRIDWIDTH)
         self.numericGrid = np.array(list(self.numericGrid))
         self.numericGrid =\
-        self.numericGrid.reshape(configs.GridHeight,configs.GridWidth)
+        self.numericGrid.reshape(configs.GRIDHEIGHT,configs.GRIDWIDTH)
         self.N = 0
 
     # creates the large grid. This needs to be called only once.
@@ -169,7 +169,7 @@ class SmallGrid:
 
     # moves the grid leftwards
     def progressGame(self, step):
-        W = configs.GridWidth
+        W = configs.GRIDWIDTH
 
         self.largeGrid.currentLeftColumn = \
             (self.largeGrid.currentLeftColumn+step)%(W*self.N)
@@ -179,7 +179,7 @@ class SmallGrid:
 
     # moves the grid rightwards
     def regressGame(self, step):
-        W = configs.GridWidth
+        W = configs.GRIDWIDTH
 
         self.largeGrid.currentLeftColumn = \
             (self.largeGrid.currentLeftColumn -step + W*self.N)%(W*self.N)
@@ -190,7 +190,7 @@ class SmallGrid:
     def loadSmallGrid(self):
         l = self.largeGrid.currentLeftColumn
         r = self.largeGrid.currentRightColumn
-        W = configs.GridWidth
+        W = configs.GRIDWIDTH
         '''
         There is a flaw in the game the enemy dragon fires the ice Ball they get
         repeated when the large grid hits end and start repeating from the
@@ -199,7 +199,7 @@ class SmallGrid:
         iceBall = ['o', '\\', '/', '-']
         assert l >= 0 and l < W * self.N, "l correct"
         assert r >= 0 and r < W * self.N, "r correct"
-        for i in range(configs.GridHeight):
+        for i in range(configs.GRIDHEIGHT):
             if r > l:
                 for j in range(self.largeGrid.currentLeftColumn,
                                self.largeGrid.currentRightColumn):
@@ -231,29 +231,29 @@ class SmallGrid:
         magnetColor = Back.YELLOW
         iceBallColor = Back.BLUE
 
-        for i in range(configs.GridHeight):
-            for j in range(configs.GridWidth):
+        for i in range(configs.GRIDHEIGHT):
+            for j in range(configs.GRIDWIDTH):
 
                 char = ''
 
-                if self.numericGrid[i][j] == configs.coinId:
+                if self.numericGrid[i][j] == configs.COINID:
                     char = coinsColor + Fore.BLACK + '$'
                 elif self.numericGrid[i][j] in [
-                        configs.horizontalBeamId, configs.verticalBeamId
+                        configs.HORIZONTALBEAMID, configs.VERTICALBEAMID
                 ]:
                     char = beamColor1 + Fore.RED + 'z'
                 elif self.numericGrid[i][j] in\
-                [configs.mainAngledBeamId, configs.offAngledBeamId]:
+                [configs.MAINANGLEDBEAMID, configs.OFFANGLEDBEAMID]:
                     char = beamColor2 + Fore.YELLOW + 'z'
-                elif self.numericGrid[i][j] == configs.groundId:
+                elif self.numericGrid[i][j] == configs.GROUNDID:
                     char = groundColor + Fore.RED + 'X'
-                elif self.numericGrid[i][j] == configs.skyId:
+                elif self.numericGrid[i][j] == configs.SKYID:
                     char = skyColor + Fore.RED + 'X'
-                elif self.numericGrid[i][j] == configs.magnetId:
+                elif self.numericGrid[i][j] == configs.MAGNETID:
                     char = magnetColor + Fore.BLACK + 'M'
-                elif self.numericGrid[i][j] == configs.dragonId:
+                elif self.numericGrid[i][j] == configs.DRAGONID:
                     char = dragonColor + Fore.MAGENTA + 'D'
-                elif self.numericGrid[i][j] == configs.iceBallId:
+                elif self.numericGrid[i][j] == configs.ICEBALLID:
                     char = iceBallColor + Fore.BLACK + self.grid[i][j]
                 else:
                     char = skyColor + ' '

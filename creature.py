@@ -30,8 +30,8 @@ Hero of the game
 
 class Mandalorian(Person):
     def __init__(self, shield_present=True, shield_active=False):
-        super().__init__(configs.MandaInitialLives, configs.MandaId,
-                         configs.MandaXLen, configs.MandaYLen)
+        super().__init__(configs.MANDAINITIALLIVES, configs.MANDAID,
+                         configs.MANDAXLEN, configs.MANDAYLEN)
 
         self.shield_present = shield_present
         self.shield_active = shield_active
@@ -101,11 +101,11 @@ class Mandalorian(Person):
         else:
             y += 5
         # don't fire bullets if they are outside the screen
-        if y >= configs.GridWidth:
+        if y >= configs.GRIDWIDTH:
             return
         loc = Location(
-            configs.BulletXLen,
-            configs.BulletYLen)  # need to pass the size of the bullets
+            configs.BULLETXLEN,
+            configs.BULLETYLEN)  # need to pass the size of the bullets
         loc.setLocation(x, y)
         self.bulletList.append(loc)
 
@@ -114,11 +114,10 @@ class Mandalorian(Person):
     def hittingViser(self, loc, ViserionXloc):
         x, y = loc.getLocation()
         result = False
-        for i in range(configs.BulletXLen):
-            for j in range(configs.BulletYLen):
-                if x + i >= ViserionXloc and x + i <= ViserionXloc
-                +configs.DragonXLen:
-                    result |= y + j >= configs.GridWidth - configs.DragonYLen
+        for i in range(configs.BULLETXLEN):
+            for j in range(configs.BULLETYLEN):
+                if x + i >= ViserionXloc and x + i <= ViserionXloc + configs.DRAGONXLEN:
+                    result |= y + j >= configs.GRIDWIDTH - configs.DRAGONYLEN
         return result
 
     # shift forward each of the bullet, this function will be called from the
@@ -131,7 +130,7 @@ class Mandalorian(Person):
             y += 1
             loc.setLocation(x, y)
             # check if the bullet is out of the grid
-            if y < configs.GridWidth:
+            if y < configs.GRIDWIDTH:
                 index.append(cnt)
             cnt += 1
         '''
@@ -141,12 +140,6 @@ class Mandalorian(Person):
         cnt = 0
         incrementScore = 0
         if ViserionPresent:
-            if ViserionDragon:
-                XLen = configs.ViserionXLen
-                YLen = configs.ViserionYLen
-            else:
-                XLen = configs.DragonXLen
-                YLen = configs.DragonYLen
             for loc in self.bulletList:
                 if self.hittingViser(loc, ViserionXloc):
                     incrementScore += 1
@@ -187,18 +180,18 @@ class Mandalorian(Person):
             y += 1
         elif keyPressed in ['w', 'W']:
             #print('up pressed')
-            self.velocityY += configs.Impulse
+            self.velocityY += configs.IMPULSE
         elif keyPressed in ['b', 'B']:
             self.fireBullet()
 
         # the shield activation will be handled in game.py
         x += self.velocityY
-        if y >= configs.GridWidth - configs.MandaYLen:
+        if y >= configs.GRIDWIDTH - configs.MANDAYLEN:
             y -= 1
         if y < 0:
             y += 1
-        if x >= configs.GridHeight - configs.MandaXLen:
-            x = configs.GridHeight - configs.MandaXLen
+        if x >= configs.GRIDHEIGHT - configs.MANDAXLEN:
+            x = configs.GRIDHEIGHT - configs.MANDAXLEN
 
         if x <= 2:
             x = 2
@@ -213,8 +206,8 @@ and throws ice balls at him.
 
 class Viserion(Person):
     def __init__(self):
-        super().__init__(configs.ViserionInitialStrength, configs.ViserionId,
-                         configs.ViserionXLen, configs.ViserionYLen)
+        super().__init__(configs.VISERIONINITIALSTRENGTH, configs.VISERIONID,
+                         configs.VISERIONXLEN, configs.VISERIONYLEN)
 
         # make the image of Viserion
         self.ball = "  -   / \\ ooooo \\ /   -  "
@@ -272,7 +265,7 @@ class Viserion(Person):
         if not self.present:
             return
         x, y = self.obj_location.getLocation()
-        y -= configs.BallXLen
+        y -= configs.BALLXLEN
         x -= 1
 
         # now return co-ordinates of the IceBall to be painted on the grid
