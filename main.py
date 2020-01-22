@@ -10,8 +10,8 @@ if __name__ == "__main__":
     clear()
     keys = NonBlockingInput()
     keys.nonBlockingTerm()
-    myGame = Game(manda,keys)
-    ViserionEntry = int(0.8*configs.gameDuration)
+    myGame = Game(manda, keys)
+    ViserionEntry = int(0.2 * configs.gameDuration)
     bulletTime = 0
     speedTime = 0
     shieldActivateTime = 0
@@ -20,6 +20,7 @@ if __name__ == "__main__":
         i += 1
         if i == configs.period:
             myGame.keepTime()
+            myGame.magnetAttract()
             if not manda.shield_active:
                 if timeFromLastShield == configs.shieldReactivate:
                     manda.shield_present = True
@@ -68,4 +69,3 @@ if __name__ == "__main__":
                     manda.move(inp)
         myGame.gameLoop()
         time.sleep(configs.rate)
-

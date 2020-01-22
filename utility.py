@@ -5,7 +5,6 @@ import termios
 import tty
 
 
-
 def clear():
     '''
     function to clear the terminal screen
@@ -18,16 +17,16 @@ def keypress(keyin):
     Identifies which key was pressed
     '''
 
-    if keyin in ('B', 'b', 'D', 'd', 'A', 'a','W' , 'w', ' ', 'q','v', 'V'):
+    if keyin in ('B', 'b', 'D', 'd', 'A', 'a', 'W', 'w', ' ', 'q', 'v', 'V'):
         return keyin
     else:
         return None
+
 
 class NonBlockingInput:
     '''
     class to deal with non-blocking input
     '''
-
     def __init__(self):
         '''
         Initializes the object to be used for non-blocking input.
@@ -69,5 +68,3 @@ class NonBlockingInput:
         clears input buffer
         '''
         termios.tcflush(sys.stdin, termios.TCIOFLUSH)
-
-
