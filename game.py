@@ -283,30 +283,30 @@ class Game:
             for i in range(configs.DRAGONXLEN):
                 for j in range(configs.DRAGONYLEN):
                     if dragon[i][j] != ' ':
-                        print(Back.BLUE + Fore.BLACK + dragon[i][j], end='')
+                        print(configs.BACKGROUNDCOLOR + configs.CHARACTERFORECOLOR + dragon[i][j], end='')
                     else:
-                        print(Back.BLUE + ' ', end='')
+                        print(configs.BACKGROUNDCOLOR + ' ', end='')
                 cx += 1
                 print('\033[' + str(cx) + ';' + str(y) + 'H', end='')
         elif self.manda.shield_active:
             for i in range(configs.MANDAXLEN):
                 for j in range(configs.MANDAYLEN):
                     if self.manda.shieldShape[i][j] != ' ':
-                        print(Back.BLUE + Fore.BLACK +
+                        print(configs.BACKGROUNDCOLOR + configs.CHARACTERFORECOLOR +
                               self.manda.shieldShape[i][j],
                               end='')
                     else:
-                        print(Back.BLUE + ' ', end='')
+                        print(configs.BACKGROUNDCOLOR + ' ', end='')
                 cx += 1
                 print('\033[' + str(cx) + ';' + str(y) + 'H', end='')
         else:
             for i in range(configs.MANDAXLEN):
                 for j in range(configs.MANDAYLEN):
                     if self.manda.shape[i][j] != ' ':
-                        print(Back.BLUE + Fore.BLACK + self.manda.shape[i][j],
+                        print(configs.BACKGROUNDCOLOR + configs.CHARACTERFORECOLOR + self.manda.shape[i][j],
                               end='')
                     else:
-                        print(Back.BLUE + ' ', end='')
+                        print(configs.BACKGROUNDCOLOR + ' ', end='')
                 cx += 1
                 print('\033[' + str(cx) + ';' + str(y) + 'H', end='')
 
@@ -324,9 +324,9 @@ class Game:
             for i in range(configs.DRAGONXLEN):
                 for j in range(configs.DRAGONYLEN):
                     if shape[i][j] != ' ':
-                        print(Back.BLUE + Fore.BLACK + shape[i][j], end='')
+                        print(configs.BACKGROUNDCOLOR + configs.CHARACTERFORECOLOR + shape[i][j], end='')
                     else:
-                        print(Back.BLUE + ' ', end='')
+                        print(configs.BACKGROUNDCOLOR + ' ', end='')
 
                 cx += 1
                 print('\033[' + str(cx) + ';' + str(vy) + 'H', end='')

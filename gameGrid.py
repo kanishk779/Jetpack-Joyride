@@ -221,7 +221,6 @@ class SmallGrid:
     # Renders the small screen using colors(colorama)
     def printSmallGrid(self):
 
-        skyColor = Back.BLUE
         coinsColor = Back.CYAN
         groundColor = Back.GREEN
         beamColor1 = Back.YELLOW
@@ -229,7 +228,6 @@ class SmallGrid:
         bonusColor = Back.MAGENTA
         dragonColor = Back.GREEN
         magnetColor = Back.YELLOW
-        iceBallColor = Back.BLUE
 
         for i in range(configs.GRIDHEIGHT):
             for j in range(configs.GRIDWIDTH):
@@ -248,15 +246,15 @@ class SmallGrid:
                 elif self.numericGrid[i][j] == configs.GROUNDID:
                     char = groundColor + Fore.RED + 'X'
                 elif self.numericGrid[i][j] == configs.SKYID:
-                    char = skyColor + Fore.RED + 'X'
+                    char = configs.BACKGROUNDCOLOR + Fore.RED + 'X'
                 elif self.numericGrid[i][j] == configs.MAGNETID:
                     char = magnetColor + Fore.BLACK + 'M'
                 elif self.numericGrid[i][j] == configs.DRAGONID:
                     char = dragonColor + Fore.MAGENTA + 'D'
                 elif self.numericGrid[i][j] == configs.ICEBALLID:
-                    char = iceBallColor + Fore.BLACK + self.grid[i][j]
+                    char = configs.BACKGROUNDCOLOR + configs.CHARACTERFORECOLOR + self.grid[i][j]
                 else:
-                    char = skyColor + ' '
+                    char = configs.BACKGROUNDCOLOR + ' '
 
                 print(char, end='')
 

@@ -1,6 +1,6 @@
 # This file stores all the constants
 # which are required throughout the project in one place
-
+from colorama import Fore,Back,Style
 MANDAINITIALLIVES = 3
 VISERIONINITIALSTRENGTH = 200
 GRIDWIDTH = 120
@@ -39,3 +39,5 @@ VISERBULLETDURATION = 5
 SPEED = False
 SHIELDREACTIVATE = 20
 SHIELDTIME = 10
+BACKGROUNDCOLOR = Back.BLUE
+CHARACTERFORECOLOR = Fore.BLACK
