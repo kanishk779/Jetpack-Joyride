@@ -7,10 +7,14 @@ that i took in 4th semester in my college.
 1. The expected outcome of this project to get a good hang of OOPS concept in
 python, and there could be nothing better than making a game.
 2. The OOPS concept used in the game are :
-  1. Encapsulation
-  2. Polymorphism
-  3. Inheritance 
-  4. Abstraction
+  1. Encapsulation - Use of classes for designing the game ensures
+	 Encapsulation.
+  2. Polymorphism - Use of createDragon method which is overridden by Manda and
+	 Viserion for rendering different dragons ensures Polymorphism.
+  3. Inheritance - Use of godObject from which all the game object inherits
+	 ensures Inheritance is being taken care of.
+  4. Abstraction - Use of private variables in the class Location ensures that
+	 unnecessary details to the outside world.
 3. The game should be a terminal-based Python3 game.
 ## About the game
 1. The protagonist of the game is Manda living in the post-empire era. He is one
