@@ -11,7 +11,7 @@ if __name__ == "__main__":
     keys = NonBlockingInput()
     keys.nonBlockingTerm()
     myGame = Game(manda, keys)
-    ViserionEntry = int(0.9 * configs.GAMEDURATION)
+    ViserionEntry = int(0.5 * configs.GAMEDURATION)
     bulletTime = 0
     speedTime = 0
     shieldActivateTime = 0
