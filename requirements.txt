@@ -10,7 +10,7 @@ more-itertools==4.3.0
 numpy==1.19.5
 pathlib2==2.3.2
 pluggy==0.8.0
-py==1.7.0
+py==1.10.0
 pycodestyle==2.4.0
 pylint==2.1.1
 pytest==3.9.3
